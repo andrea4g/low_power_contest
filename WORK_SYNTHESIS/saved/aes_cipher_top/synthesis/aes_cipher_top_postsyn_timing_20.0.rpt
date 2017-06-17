@@ -1,0 +1,74 @@
+Information: Updating design information... (UID-85)
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : aes_cipher_top
+Version: J-2014.09-SP2
+Date   : Sat Jun 10 18:30:24 2017
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: nom_1.20V_25C   Library: CORE65LPSVT
+Wire Load Model Mode: enclosed
+
+  Startpoint: clk_r_REG3033_S16
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: clk_r_REG2880_S16
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  aes_cipher_top     area_12Kto18K         CORE65LPSVT
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                               0.000000   0.000000
+  clock network delay (ideal)                         0.050000   0.050000
+  clk_r_REG3033_S16/CP (HS65_LS_DFPQX4)               0.000000 # 0.050000 r
+  clk_r_REG3033_S16/Q (HS65_LS_DFPQX4)                0.121157   0.171157 f
+  U38564/Z (HS65_LS_AOI12X2)                          0.060039   0.231196 r
+  U34199/Z (HS65_LS_OAI21X2)                          0.058336   0.289532 f
+  U38563/Z (HS65_LS_OAI21X2)                          0.095370   0.384902 r
+  U38425/Z (HS65_LS_IVX2)                             0.141906   0.526808 f
+  U40387/Z (HS65_LS_NAND2X2)                          0.119387   0.646195 r
+  U38541/Z (HS65_LS_IVX2)                             0.074434   0.720629 f
+  U40633/Z (HS65_LS_NAND2X2)                          0.193043   0.913672 r
+  U40611/Z (HS65_LS_IVX2)                             0.217295   1.130967 f
+  U43096/Z (HS65_LS_OAI13X1)                          0.129620   1.260587 r
+  U43109/Z (HS65_LS_OAI112X1)                         0.105456   1.366043 f
+  U43110/Z (HS65_LS_CBI4I6X2)                         0.098689   1.464732 r
+  U40361/Z (HS65_LS_CBI4I1X3)                         0.070264   1.534996 f
+  U40359/Z (HS65_LS_NOR3X1)                           0.091992   1.626988 r
+  U30146/Z (HS65_LS_NOR4ABX2)                         0.125402   1.752390 r
+  U42290/Z (HS65_LS_NAND3X2)                          0.076526   1.828916 f
+  U42289/Z (HS65_LS_NOR3X1)                           0.188821   2.017737 r
+  U30123/Z (HS65_LS_MUXI21X2)                         0.246944   2.264681 r
+  U43070/Z (HS65_LS_IVX2)                             0.183085   2.447766 f
+  U34889/Z (HS65_LS_MUXI21X2)                         0.113819   2.561584 r
+  U39974/Z (HS65_LS_OAI21X2)                          0.072805   2.634389 f
+  U39973/Z (HS65_LS_CBI4I1X3)                         0.133176   2.767565 r
+  U40110/Z (HS65_LS_IVX2)                             0.088334   2.855899 f
+  U42265/Z (HS65_LS_NOR2X2)                           0.063949   2.919848 r
+  clk_r_REG2880_S16/D (HS65_LS_DFPQX4)                0.000015   2.919863 r
+  data arrival time                                              2.919863
+
+  clock clk (rise edge)                               20.000000  20.000000
+  clock network delay (ideal)                         0.050000   20.049999
+  clock uncertainty                                   -0.050000  20.000000
+  clk_r_REG2880_S16/CP (HS65_LS_DFPQX4)               0.000000   20.000000 r
+  library setup time                                  -0.057596  19.942404
+  data required time                                             19.942404
+  --------------------------------------------------------------------------
+  data required time                                             19.942404
+  data arrival time                                              -2.919863
+  --------------------------------------------------------------------------
+  slack (MET)                                                    17.022541
+
+
+1

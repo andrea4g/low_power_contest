@@ -1,0 +1,3728 @@
+#@ # 
+#@ # Running pt_shell Version J-2014.12 for amd64 -- Nov 23, 2014
+#@ # Date:   Sat Jun 17 12:22:21 2017
+#@ # Run by: s242094@worksynthesis
+#@ 
+
+source /tools/synopsys_14.15/pt/admin/setup/.synopsys_pt.setup
+#@ # -- Starting source /tools/synopsys_14.15/pt/admin/setup/.synopsys_pt.setup
+
+#@ #
+#@ # .synopsys_pt.setup: Initialization File for PrimeTime
+#@ #
+#@ 
+#@ 
+#@ #
+#@ # Enable stack trace output on fatal.  Not available for all architectures.
+#@ #
+#@ if { $sh_arch == "sparcOS5" || $sh_arch == "hpux10" ||      $sh_arch == "hp32" || $sh_arch == "linux" } {
+#@   set_unix_variable SYNOPSYS_TRACE ""
+#@ }
+#@ 
+#@ #
+#@ # Variable settings
+#@ #
+#@ 
+#@ #
+#@ # Synopsys strongly recommends that you use new variable message
+#@ # tracing for debugging purposes only.
+#@ #
+#@ set sh_new_variable_message true
+#@ 
+#@ #
+#@ # Synopsys strongly recommends that you uncomment the following command
+#@ # in order to set sh_command_abbrev_mode to the value "Command-Line-Only".
+#@ # Command abbreviation is intended as an interactive convenience.  Using
+#@ # abbreviations in scripts can cause commands to fail in subsequent releases.
+#@ # 
+#@ #set sh_command_abbrev_mode "Command-Line-Only"
+#@ 
+#@ #
+#@ # Some useful aliases
+#@ #
+#@ alias list_commands		help
+#@ alias report_constraints	report_constraint
+#@ alias report_clocks		report_clock
+#@ 
+#@ #
+#@ # The alias for get_clock was added when get_clock_network_objects
+#@ # was introduced, as it conflicts with get_clocks (and get_clock is a
+#@ # typical abbreviation for get_clocks)
+#@ #
+#@ alias get_clock get_clocks
+#@ 
+#@ 
+#@ #
+#@ #
+#@ # The alias of q to quit is commented out.  Remove the comment 
+#@ # character if you want this alias.  Some users find that having 
+#@ # this particular alias causes problems when mixed with page-mode
+#@ # for reports - an accidental repeated 'q' not only cancels the
+#@ # output but exits the tool.
+#@ #
+#@ #alias q quit
+#@ 
+#@ # -- End source /tools/synopsys_14.15/pt/admin/setup/.synopsys_pt.setup
+
+#@ # -- Starting source /tools/synopsys_14.15/pt/auxx/tcllib/lib/itcl3.4/itcl.tcl
+
+#@ #
+#@ # itcl.tcl
+#@ # ----------------------------------------------------------------------
+#@ # Invoked automatically upon startup to customize the interpreter
+#@ # for [incr Tcl].
+#@ # ----------------------------------------------------------------------
+#@ #   AUTHOR:  Michael J. McLennan
+#@ #            Bell Labs Innovations for Lucent Technologies
+#@ #            mmclennan@lucent.com
+#@ #            http://www.tcltk.com/itcl
+#@ #
+#@ #      RCS:  $Id: itcl.tcl,v 1.12 2009/10/14 20:53:34 hobbs Exp $
+#@ # ----------------------------------------------------------------------
+#@ #            Copyright (c) 1993-1998  Lucent Technologies, Inc.
+#@ # ======================================================================
+#@ # See the file "license.terms" for information on usage and
+#@ # redistribution of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+#@ 
+#@ proc ::itcl::delete_helper { name args } {
+#@     ::itcl::delete object $name
+#@ }
+#@ 
+#@ # ----------------------------------------------------------------------
+#@ #  USAGE:  local <className> <objName> ?<arg> <arg>...?
+#@ #
+#@ #  Creates a new object called <objName> in class <className>, passing
+#@ #  the remaining <arg>'s to the constructor.  Unlike the usual
+#@ #  [incr Tcl] objects, however, an object created by this procedure
+#@ #  will be automatically deleted when the local call frame is destroyed.
+#@ #  This command is useful for creating objects that should only remain
+#@ #  alive until a procedure exits.
+#@ # ----------------------------------------------------------------------
+#@ proc ::itcl::local {class name args} {
+#@     set ptr [uplevel [list $class $name] $args]
+#@     uplevel [list set itcl-local-$ptr $ptr]
+#@     set cmd [uplevel namespace which -command $ptr]
+#@     uplevel [list trace variable itcl-local-$ptr u         "::itcl::delete_helper $cmd"]
+#@     return $ptr
+#@ }
+#@ 
+#@ # ----------------------------------------------------------------------
+#@ # auto_mkindex
+#@ # ----------------------------------------------------------------------
+#@ # Define Itcl commands that will be recognized by the auto_mkindex
+#@ # parser in Tcl...
+#@ #
+#@ 
+#@ #
+#@ # USAGE:  itcl::class name body
+#@ # Adds an entry for the given class declaration.
+#@ #
+#@ foreach cmd {itcl::class class} {
+#@     auto_mkindex_parser::command $cmd {name body} {
+#@ 	variable index
+#@ 	variable scriptFile
+#@ 	append index "set [list auto_index([fullname $name])]"
+#@ 	append index " \[list source \[file join \$dir [list $scriptFile]\]\]\n"
+#@ 
+#@ 	variable parser
+#@ 	variable contextStack
+#@ 	set contextStack [linsert $contextStack 0 $name]
+#@ 	$parser eval $body
+#@ 	set contextStack [lrange $contextStack 1 end]
+#@     }
+#@ }
+#@ # -- Starting source /tools/synopsys_14.15/pt/auxx/tcllib/lib/tcl8.5/auto.tcl
+
+#@ # auto.tcl --
+#@ #
+#@ # utility procs formerly in init.tcl dealing with auto execution
+#@ # of commands and can be auto loaded themselves.
+#@ #
+#@ # Copyright (c) 1991-1993 The Regents of the University of California.
+#@ # Copyright (c) 1994-1998 Sun Microsystems, Inc.
+#@ #
+#@ # See the file "license.terms" for information on usage and redistribution
+#@ # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+#@ #
+#@ 
+#@ # auto_reset --
+#@ #
+#@ # Destroy all cached information for auto-loading and auto-execution,
+#@ # so that the information gets recomputed the next time it's needed.
+#@ # Also delete any commands that are listed in the auto-load index.
+#@ #
+#@ # Arguments: 
+#@ # None.
+#@ 
+#@ proc auto_reset {} {
+#@     if {[array exists ::auto_index]} {
+#@ 	foreach cmdName [array names ::auto_index] {
+#@ 	    set fqcn [namespace which $cmdName]
+#@ 	    if {$fqcn eq ""} {continue}
+#@ 	    rename $fqcn {}
+#@ 	}
+#@     }
+#@     unset -nocomplain ::auto_execs ::auto_index ::tcl::auto_oldpath
+#@     if {[catch {llength $::auto_path}]} {
+#@ 	set ::auto_path [list [info library]]
+#@     } else {
+#@ 	if {[info library] ni $::auto_path} {
+#@ 	    lappend ::auto_path [info library]
+#@ 	}
+#@     }
+#@ }
+#@ 
+#@ # tcl_findLibrary --
+#@ #
+#@ #	This is a utility for extensions that searches for a library directory
+#@ #	using a canonical searching algorithm. A side effect is to source
+#@ #	the initialization script and set a global library variable.
+#@ #
+#@ # Arguments:
+#@ # 	basename	Prefix of the directory name, (e.g., "tk")
+#@ #	version		Version number of the package, (e.g., "8.0")
+#@ #	patch		Patchlevel of the package, (e.g., "8.0.3")
+#@ #	initScript	Initialization script to source (e.g., tk.tcl)
+#@ #	enVarName	environment variable to honor (e.g., TK_LIBRARY)
+#@ #	varName		Global variable to set when done (e.g., tk_library)
+#@ 
+#@ proc tcl_findLibrary {basename version patch initScript enVarName varName} {
+#@     upvar #0 $varName the_library
+#@     global env
+#@ 
+#@     set dirs {}
+#@     set errors {}
+#@ 
+#@     # The C application may have hardwired a path, which we honor
+#@ 
+#@     if {[info exists the_library] && $the_library ne ""} {
+#@ 	lappend dirs $the_library
+#@     } else {
+#@ 
+#@ 	# Do the canonical search
+#@ 
+#@ 	# 1. From an environment variable, if it exists.
+#@ 	#    Placing this first gives the end-user ultimate control
+#@ 	#    to work-around any bugs, or to customize.
+#@ 
+#@         if {[info exists env($enVarName)]} {
+#@             lappend dirs $env($enVarName)
+#@         }
+#@ 
+#@ 	# 2. In the package script directory registered within
+#@ 	#    the configuration of the package itself.
+#@ 
+#@ 	if {[catch {
+#@ 	    ::${basename}::pkgconfig get scriptdir,runtime
+#@ 	} value] == 0} {
+#@ 	    lappend dirs $value
+#@ 	}
+#@ 
+#@ 	# 3. Relative to auto_path directories.  This checks relative to the
+#@ 	# Tcl library as well as allowing loading of libraries added to the
+#@ 	# auto_path that is not relative to the core library or binary paths.
+#@ 	foreach d $::auto_path {
+#@ 	    lappend dirs [file join $d $basename$version]
+#@ 	    if {$::tcl_platform(platform) eq "unix"
+#@ 		&& $::tcl_platform(os) eq "Darwin"} {
+#@ 		# 4. On MacOSX, check the Resources/Scripts subdir too
+#@ 		lappend dirs [file join $d $basename$version Resources Scripts]
+#@ 	    }
+#@ 	}
+#@ 
+#@ 	# 3. Various locations relative to the executable
+#@ 	# ../lib/foo1.0		(From bin directory in install hierarchy)
+#@ 	# ../../lib/foo1.0	(From bin/arch directory in install hierarchy)
+#@ 	# ../library		(From unix directory in build hierarchy)
+#@ 	#
+#@ 	# Remaining locations are out of date (when relevant, they ought
+#@ 	# to be covered by the $::auto_path seach above) and disabled.
+#@ 	#
+#@ 	# ../../library		(From unix/arch directory in build hierarchy)
+#@ 	# ../../foo1.0.1/library
+#@ 	#		(From unix directory in parallel build hierarchy)
+#@ 	# ../../../foo1.0.1/library
+#@ 	#		(From unix/arch directory in parallel build hierarchy)
+#@ 
+#@         set parentDir [file dirname [file dirname [info nameofexecutable]]]
+#@         set grandParentDir [file dirname $parentDir]
+#@         lappend dirs [file join $parentDir lib $basename$version]
+#@         lappend dirs [file join $grandParentDir lib $basename$version]
+#@         lappend dirs [file join $parentDir library]
+#@ 	if {0} {
+#@ 	    lappend dirs [file join $grandParentDir library]
+#@ 	    lappend dirs [file join $grandParentDir $basename$patch library]
+#@ 	    lappend dirs [file join [file dirname $grandParentDir] 			      $basename$patch library]
+#@ 	}
+#@     }
+#@     # uniquify $dirs in order
+#@     array set seen {}
+#@     foreach i $dirs {
+#@ 	# Take note that the [file normalize] below has been noted to
+#@ 	# cause difficulties for the freewrap utility.  See Bug 1072136.
+#@ 	# Until freewrap resolves the matter, one might work around the
+#@ 	# problem by disabling that branch.
+#@ 	if {[interp issafe]} {
+#@ 	    set norm $i
+#@ 	} else {
+#@ 	    set norm [file normalize $i]
+#@ 	}
+#@ 	if {[info exists seen($norm)]} { continue }
+#@ 	set seen($norm) ""
+#@ 	lappend uniqdirs $i
+#@     }
+#@     set dirs $uniqdirs
+#@     foreach i $dirs {
+#@         set the_library $i
+#@         set file [file join $i $initScript]
+#@ 
+#@ 	# source everything when in a safe interpreter because
+#@ 	# we have a source command, but no file exists command
+#@ 
+#@         if {[interp issafe] || [file exists $file]} {
+#@             if {![catch {uplevel #0 [list source $file]} msg opts]} {
+#@                 return
+#@             } else {
+#@                 append errors "$file: $msg\n"
+#@ 		append errors [dict get $opts -errorinfo]\n
+#@             }
+#@         }
+#@     }
+#@     unset -nocomplain the_library
+#@     set msg "Can't find a usable $initScript in the following directories: \n"
+#@     append msg "    $dirs\n\n"
+#@     append msg "$errors\n\n"
+#@     append msg "This probably means that $basename wasn't installed properly.\n"
+#@     error $msg
+#@ }
+#@ 
+#@ 
+#@ # ----------------------------------------------------------------------
+#@ # auto_mkindex
+#@ # ----------------------------------------------------------------------
+#@ # The following procedures are used to generate the tclIndex file
+#@ # from Tcl source files.  They use a special safe interpreter to
+#@ # parse Tcl source files, writing out index entries as "proc"
+#@ # commands are encountered.  This implementation won't work in a
+#@ # safe interpreter, since a safe interpreter can't create the
+#@ # special parser and mess with its commands.  
+#@ 
+#@ if {[interp issafe]} {
+#@     return	;# Stop sourcing the file here
+#@ }
+#@ 
+#@ # auto_mkindex --
+#@ # Regenerate a tclIndex file from Tcl source files.  Takes as argument
+#@ # the name of the directory in which the tclIndex file is to be placed,
+#@ # followed by any number of glob patterns to use in that directory to
+#@ # locate all of the relevant files.
+#@ #
+#@ # Arguments: 
+#@ # dir -		Name of the directory in which to create an index.
+#@ # args -	Any number of additional arguments giving the
+#@ #		names of files within dir.  If no additional
+#@ #		are given auto_mkindex will look for *.tcl.
+#@ 
+#@ proc auto_mkindex {dir args} {
+#@     if {[interp issafe]} {
+#@         error "can't generate index within safe interpreter"
+#@     }
+#@ 
+#@     set oldDir [pwd]
+#@     cd $dir
+#@     set dir [pwd]
+#@ 
+#@     append index "# Tcl autoload index file, version 2.0\n"
+#@     append index "# This file is generated by the \"auto_mkindex\" command\n"
+#@     append index "# and sourced to set up indexing information for one or\n"
+#@     append index "# more commands.  Typically each line is a command that\n"
+#@     append index "# sets an element in the auto_index array, where the\n"
+#@     append index "# element name is the name of a command and the value is\n"
+#@     append index "# a script that loads the command.\n\n"
+#@     if {[llength $args] == 0} {
+#@ 	set args *.tcl
+#@     }
+#@ 
+#@     auto_mkindex_parser::init
+#@     foreach file [glob -- {*}$args] {
+#@         if {[catch {auto_mkindex_parser::mkindex $file} msg opts] == 0} {
+#@             append index $msg
+#@         } else {
+#@             cd $oldDir
+#@ 	    return -options $opts $msg
+#@         }
+#@     }
+#@     auto_mkindex_parser::cleanup
+#@ 
+#@     set fid [open "tclIndex" w]
+#@     puts -nonewline $fid $index
+#@     close $fid
+#@     cd $oldDir
+#@ }
+#@ 
+#@ # Original version of auto_mkindex that just searches the source
+#@ # code for "proc" at the beginning of the line.
+#@ 
+#@ proc auto_mkindex_old {dir args} {
+#@     set oldDir [pwd]
+#@     cd $dir
+#@     set dir [pwd]
+#@     append index "# Tcl autoload index file, version 2.0\n"
+#@     append index "# This file is generated by the \"auto_mkindex\" command\n"
+#@     append index "# and sourced to set up indexing information for one or\n"
+#@     append index "# more commands.  Typically each line is a command that\n"
+#@     append index "# sets an element in the auto_index array, where the\n"
+#@     append index "# element name is the name of a command and the value is\n"
+#@     append index "# a script that loads the command.\n\n"
+#@     if {[llength $args] == 0} {
+#@ 	set args *.tcl
+#@     }
+#@     foreach file [glob -- {*}$args] {
+#@ 	set f ""
+#@ 	set error [catch {
+#@ 	    set f [open $file]
+#@ 	    while {[gets $f line] >= 0} {
+#@ 		if {[regexp {^proc[ 	]+([^ 	]*)} $line match procName]} {
+#@ 		    set procName [lindex [auto_qualify $procName "::"] 0]
+#@ 		    append index "set [list auto_index($procName)]"
+#@ 		    append index " \[list source \[file join \$dir [list $file]\]\]\n"
+#@ 		}
+#@ 	    }
+#@ 	    close $f
+#@ 	} msg opts]
+#@ 	if {$error} {
+#@ 	    catch {close $f}
+#@ 	    cd $oldDir
+#@ 	    return -options $opts $msg
+#@ 	}
+#@     }
+#@     set f ""
+#@     set error [catch {
+#@ 	set f [open tclIndex w]
+#@ 	puts -nonewline $f $index
+#@ 	close $f
+#@ 	cd $oldDir
+#@     } msg opts]
+#@     if {$error} {
+#@ 	catch {close $f}
+#@ 	cd $oldDir
+#@ 	error $msg $info $code
+#@ 	return -options $opts $msg
+#@     }
+#@ }
+#@ 
+#@ # Create a safe interpreter that can be used to parse Tcl source files
+#@ # generate a tclIndex file for autoloading.  This interp contains
+#@ # commands for things that need index entries.  Each time a command
+#@ # is executed, it writes an entry out to the index file.
+#@ 
+#@ namespace eval auto_mkindex_parser {
+#@     variable parser ""          ;# parser used to build index
+#@     variable index ""           ;# maintains index as it is built
+#@     variable scriptFile ""      ;# name of file being processed
+#@     variable contextStack ""    ;# stack of namespace scopes
+#@     variable imports ""         ;# keeps track of all imported cmds
+#@     variable initCommands       ;# list of commands that create aliases
+#@     if {![info exists initCommands]} {
+#@ 	set initCommands [list]
+#@     }
+#@ 
+#@     proc init {} {
+#@ 	variable parser
+#@ 	variable initCommands
+#@ 
+#@ 	if {![interp issafe]} {
+#@ 	    set parser [interp create -safe]
+#@ 	    $parser hide info
+#@ 	    $parser hide rename
+#@ 	    $parser hide proc
+#@ 	    $parser hide namespace
+#@ 	    $parser hide eval
+#@ 	    $parser hide puts
+#@ 	    $parser invokehidden namespace delete ::
+#@ 	    $parser invokehidden proc unknown {args} {}
+#@ 
+#@ 	    # We'll need access to the "namespace" command within the
+#@ 	    # interp.  Put it back, but move it out of the way.
+#@ 
+#@ 	    $parser expose namespace
+#@ 	    $parser invokehidden rename namespace _%@namespace
+#@ 	    $parser expose eval
+#@ 	    $parser invokehidden rename eval _%@eval
+#@ 
+#@ 	    # Install all the registered psuedo-command implementations
+#@ 
+#@ 	    foreach cmd $initCommands {
+#@ 		eval $cmd
+#@ 	    }
+#@ 	}
+#@     }
+#@     proc cleanup {} {
+#@ 	variable parser
+#@ 	interp delete $parser
+#@ 	unset parser
+#@     }
+#@ }
+#@ 
+#@ # auto_mkindex_parser::mkindex --
+#@ #
+#@ # Used by the "auto_mkindex" command to create a "tclIndex" file for
+#@ # the given Tcl source file.  Executes the commands in the file, and
+#@ # handles things like the "proc" command by adding an entry for the
+#@ # index file.  Returns a string that represents the index file.
+#@ #
+#@ # Arguments: 
+#@ #	file	Name of Tcl source file to be indexed.
+#@ 
+#@ proc auto_mkindex_parser::mkindex {file} {
+#@     variable parser
+#@     variable index
+#@     variable scriptFile
+#@     variable contextStack
+#@     variable imports
+#@ 
+#@     set scriptFile $file
+#@ 
+#@     set fid [open $file]
+#@     set contents [read $fid]
+#@     close $fid
+#@ 
+#@     # There is one problem with sourcing files into the safe
+#@     # interpreter:  references like "$x" will fail since code is not
+#@     # really being executed and variables do not really exist.
+#@     # To avoid this, we replace all $ with \0 (literally, the null char)
+#@     # later, when getting proc names we will have to reverse this replacement,
+#@     # in case there were any $ in the proc name.  This will cause a problem
+#@     # if somebody actually tries to have a \0 in their proc name.  Too bad
+#@     # for them.
+#@     set contents [string map [list \$ \0] $contents]
+#@ 
+#@     set index ""
+#@     set contextStack ""
+#@     set imports ""
+#@ 
+#@     $parser eval $contents
+#@ 
+#@     foreach name $imports {
+#@         catch {$parser eval [list _%@namespace forget $name]}
+#@     }
+#@     return $index
+#@ }
+#@ 
+#@ # auto_mkindex_parser::hook command
+#@ #
+#@ # Registers a Tcl command to evaluate when initializing the
+#@ # slave interpreter used by the mkindex parser.
+#@ # The command is evaluated in the master interpreter, and can
+#@ # use the variable auto_mkindex_parser::parser to get to the slave
+#@ 
+#@ proc auto_mkindex_parser::hook {cmd} {
+#@     variable initCommands
+#@ 
+#@     lappend initCommands $cmd
+#@ }
+#@ 
+#@ # auto_mkindex_parser::slavehook command
+#@ #
+#@ # Registers a Tcl command to evaluate when initializing the
+#@ # slave interpreter used by the mkindex parser.
+#@ # The command is evaluated in the slave interpreter.
+#@ 
+#@ proc auto_mkindex_parser::slavehook {cmd} {
+#@     variable initCommands
+#@ 
+#@     # The $parser variable is defined to be the name of the
+#@     # slave interpreter when this command is used later.
+#@ 
+#@     lappend initCommands "\$parser eval [list $cmd]"
+#@ }
+#@ 
+#@ # auto_mkindex_parser::command --
+#@ #
+#@ # Registers a new command with the "auto_mkindex_parser" interpreter
+#@ # that parses Tcl files.  These commands are fake versions of things
+#@ # like the "proc" command.  When you execute them, they simply write
+#@ # out an entry to a "tclIndex" file for auto-loading.
+#@ #
+#@ # This procedure allows extensions to register their own commands
+#@ # with the auto_mkindex facility.  For example, a package like
+#@ # [incr Tcl] might register a "class" command so that class definitions
+#@ # could be added to a "tclIndex" file for auto-loading.
+#@ #
+#@ # Arguments:
+#@ #	name 	Name of command recognized in Tcl files.
+#@ #	arglist	Argument list for command.
+#@ #	body 	Implementation of command to handle indexing.
+#@ 
+#@ proc auto_mkindex_parser::command {name arglist body} {
+#@     hook [list auto_mkindex_parser::commandInit $name $arglist $body]
+#@ }
+#@ 
+#@ # auto_mkindex_parser::commandInit --
+#@ #
+#@ # This does the actual work set up by auto_mkindex_parser::command
+#@ # This is called when the interpreter used by the parser is created.
+#@ #
+#@ # Arguments:
+#@ #	name 	Name of command recognized in Tcl files.
+#@ #	arglist	Argument list for command.
+#@ #	body 	Implementation of command to handle indexing.
+#@ 
+#@ proc auto_mkindex_parser::commandInit {name arglist body} {
+#@     variable parser
+#@ 
+#@     set ns [namespace qualifiers $name]
+#@     set tail [namespace tail $name]
+#@     if {$ns eq ""} {
+#@         set fakeName [namespace current]::_%@fake_$tail
+#@     } else {
+#@         set fakeName [namespace current]::[string map {:: _} _%@fake_$name]
+#@     }
+#@     proc $fakeName $arglist $body
+#@ 
+#@     # YUK!  Tcl won't let us alias fully qualified command names,
+#@     # so we can't handle names like "::itcl::class".  Instead,
+#@     # we have to build procs with the fully qualified names, and
+#@     # have the procs point to the aliases.
+#@ 
+#@     if {[string match *::* $name]} {
+#@         set exportCmd [list _%@namespace export [namespace tail $name]]
+#@         $parser eval [list _%@namespace eval $ns $exportCmd]
+#@  
+#@ 	# The following proc definition does not work if you
+#@ 	# want to tolerate space or something else diabolical
+#@ 	# in the procedure name, (i.e., space in $alias)
+#@ 	# The following does not work:
+#@ 	#   "_%@eval {$alias} \$args"
+#@ 	# because $alias gets concat'ed to $args.
+#@ 	# The following does not work because $cmd is somehow undefined
+#@ 	#   "set cmd {$alias} \; _%@eval {\$cmd} \$args"
+#@ 	# A gold star to someone that can make test
+#@ 	# autoMkindex-3.3 work properly
+#@ 
+#@         set alias [namespace tail $fakeName]
+#@         $parser invokehidden proc $name {args} "_%@eval {$alias} \$args"
+#@         $parser alias $alias $fakeName
+#@     } else {
+#@         $parser alias $name $fakeName
+#@     }
+#@     return
+#@ }
+#@ 
+#@ # auto_mkindex_parser::fullname --
+#@ # Used by commands like "proc" within the auto_mkindex parser.
+#@ # Returns the qualified namespace name for the "name" argument.
+#@ # If the "name" does not start with "::", elements are added from
+#@ # the current namespace stack to produce a qualified name.  Then,
+#@ # the name is examined to see whether or not it should really be
+#@ # qualified.  If the name has more than the leading "::", it is
+#@ # returned as a fully qualified name.  Otherwise, it is returned
+#@ # as a simple name.  That way, the Tcl autoloader will recognize
+#@ # it properly.
+#@ #
+#@ # Arguments:
+#@ # name -		Name that is being added to index.
+#@ 
+#@ proc auto_mkindex_parser::fullname {name} {
+#@     variable contextStack
+#@ 
+#@     if {![string match ::* $name]} {
+#@         foreach ns $contextStack {
+#@             set name "${ns}::$name"
+#@             if {[string match ::* $name]} {
+#@                 break
+#@             }
+#@         }
+#@     }
+#@ 
+#@     if {[namespace qualifiers $name] eq ""} {
+#@         set name [namespace tail $name]
+#@     } elseif {![string match ::* $name]} {
+#@         set name "::$name"
+#@     }
+#@ 
+#@     # Earlier, mkindex replaced all $'s with \0.  Now, we have to reverse
+#@     # that replacement.
+#@     return [string map [list \0 \$] $name]
+#@ }
+#@ 
+#@ if {[llength $::auto_mkindex_parser::initCommands]} {
+#@     return
+#@ }
+#@ 
+#@ # Register all of the procedures for the auto_mkindex parser that
+#@ # will build the "tclIndex" file.
+#@ 
+#@ # AUTO MKINDEX:  proc name arglist body
+#@ # Adds an entry to the auto index list for the given procedure name.
+#@ 
+#@ auto_mkindex_parser::command proc {name args} {
+#@     variable index
+#@     variable scriptFile
+#@     # Do some fancy reformatting on the "source" call to handle platform
+#@     # differences with respect to pathnames.  Use format just so that the
+#@     # command is a little easier to read (otherwise it'd be full of 
+#@     # backslashed dollar signs, etc.
+#@     append index [list set auto_index([fullname $name])] 	    [format { [list source [file join $dir %s]]} 	    [file split $scriptFile]] "\n"
+#@ }
+#@ 
+#@ # Conditionally add support for Tcl byte code files.  There are some
+#@ # tricky details here.  First, we need to get the tbcload library
+#@ # initialized in the current interpreter.  We cannot load tbcload into the
+#@ # slave until we have done so because it needs access to the tcl_patchLevel
+#@ # variable.  Second, because the package index file may defer loading the
+#@ # library until we invoke a command, we need to explicitly invoke auto_load
+#@ # to force it to be loaded.  This should be a noop if the package has
+#@ # already been loaded
+#@ 
+#@ auto_mkindex_parser::hook {
+#@     if {![catch {package require tbcload}]} {
+#@ 	if {[namespace which -command tbcload::bcproc] eq ""} {
+#@ 	    auto_load tbcload::bcproc
+#@ 	}
+#@         if {[info commands load] == "load"} {
+#@ 	    load {} tbcload $auto_mkindex_parser::parser
+#@         }
+#@ 
+#@ 	# AUTO MKINDEX:  tbcload::bcproc name arglist body
+#@ 	# Adds an entry to the auto index list for the given pre-compiled
+#@ 	# procedure name.  
+#@ 
+#@ 	auto_mkindex_parser::commandInit tbcload::bcproc {name args} {
+#@ 	    variable index
+#@ 	    variable scriptFile
+#@ 	    # Do some nice reformatting of the "source" call, to get around
+#@ 	    # path differences on different platforms.  We use the format
+#@ 	    # command just so that the code is a little easier to read.
+#@ 	    append index [list set auto_index([fullname $name])] 		    [format { [list source [file join $dir %s]]} 		    [file split $scriptFile]] "\n"
+#@ 	}
+#@     }
+#@ }
+#@ 
+#@ # AUTO MKINDEX:  namespace eval name command ?arg arg...?
+#@ # Adds the namespace name onto the context stack and evaluates the
+#@ # associated body of commands.
+#@ #
+#@ # AUTO MKINDEX:  namespace import ?-force? pattern ?pattern...?
+#@ # Performs the "import" action in the parser interpreter.  This is
+#@ # important for any commands contained in a namespace that affect
+#@ # the index.  For example, a script may say "itcl::class ...",
+#@ # or it may import "itcl::*" and then say "class ...".  This
+#@ # procedure does the import operation, but keeps track of imported
+#@ # patterns so we can remove the imports later.
+#@ 
+#@ auto_mkindex_parser::command namespace {op args} {
+#@     switch -- $op {
+#@         eval {
+#@             variable parser
+#@             variable contextStack
+#@ 
+#@             set name [lindex $args 0]
+#@             set args [lrange $args 1 end]
+#@ 
+#@             set contextStack [linsert $contextStack 0 $name]
+#@ 	    $parser eval [list _%@namespace eval $name] $args
+#@             set contextStack [lrange $contextStack 1 end]
+#@         }
+#@         import {
+#@             variable parser
+#@             variable imports
+#@             foreach pattern $args {
+#@                 if {$pattern ne "-force"} {
+#@                     lappend imports $pattern
+#@                 }
+#@             }
+#@             catch {$parser eval "_%@namespace import $args"}
+#@         }
+#@     }
+#@ }
+#@ 
+#@ return
+#@ # -- End source /tools/synopsys_14.15/pt/auxx/tcllib/lib/tcl8.5/auto.tcl
+
+#@ 
+#@ #
+#@ # USAGE:  itcl::body name arglist body
+#@ # Adds an entry for the given method/proc body.
+#@ #
+#@ foreach cmd {itcl::body body} {
+#@     auto_mkindex_parser::command $cmd {name arglist body} {
+#@ 	variable index
+#@ 	variable scriptFile
+#@ 	append index "set [list auto_index([fullname $name])]"
+#@ 	append index " \[list source \[file join \$dir [list $scriptFile]\]\]\n"
+#@     }
+#@ }
+#@ 
+#@ #
+#@ # USAGE:  itcl::configbody name arglist body
+#@ # Adds an entry for the given method/proc body.
+#@ #
+#@ foreach cmd {itcl::configbody configbody} {
+#@     auto_mkindex_parser::command $cmd {name body} {
+#@ 	variable index
+#@ 	variable scriptFile
+#@ 	append index "set [list auto_index([fullname $name])]"
+#@ 	append index " \[list source \[file join \$dir [list $scriptFile]\]\]\n"
+#@     }
+#@ }
+#@ 
+#@ #
+#@ # USAGE:  ensemble name ?body?
+#@ # Adds an entry to the auto index list for the given ensemble name.
+#@ #
+#@ foreach cmd {itcl::ensemble ensemble} {
+#@     auto_mkindex_parser::command $cmd {name {body ""}} {
+#@ 	variable index
+#@ 	variable scriptFile
+#@ 	append index "set [list auto_index([fullname $name])]"
+#@ 	append index " \[list source \[file join \$dir [list $scriptFile]\]\]\n"
+#@     }
+#@ }
+#@ 
+#@ #
+#@ # USAGE:  public arg ?arg arg...?
+#@ #         protected arg ?arg arg...?
+#@ #         private arg ?arg arg...?
+#@ #
+#@ # Evaluates the arguments as commands, so we can recognize proc
+#@ # declarations within classes.
+#@ #
+#@ foreach cmd {public protected private} {
+#@     auto_mkindex_parser::command $cmd {args} {
+#@         variable parser
+#@         $parser eval $args
+#@     }
+#@ }
+#@ 
+#@ # ----------------------------------------------------------------------
+#@ # auto_import
+#@ # ----------------------------------------------------------------------
+#@ # This procedure overrides the usual "auto_import" function in the
+#@ # Tcl library.  It is invoked during "namespace import" to make see
+#@ # if the imported commands reside in an autoloaded library.  If so,
+#@ # stubs are created to represent the commands.  Executing a stub
+#@ # later on causes the real implementation to be autoloaded.
+#@ #
+#@ # Arguments -
+#@ # pattern	The pattern of commands being imported (like "foo::*")
+#@ #               a canonical namespace as returned by [namespace current]
+#@ 
+#@ proc auto_import {pattern} {
+#@     global auto_index
+#@ 
+#@     set ns [uplevel namespace current]
+#@     set patternList [auto_qualify $pattern $ns]
+#@ 
+#@     auto_load_index
+#@ 
+#@     foreach pattern $patternList {
+#@         foreach name [array names auto_index $pattern] {
+#@             if {"" == [info commands $name]} {
+#@                 ::itcl::import::stub create $name
+#@             }
+#@         }
+#@     }
+#@ }
+#@ 
+#@ # ----------------------------------------------------------------------
+#@ # itcl_class, itcl_info
+#@ # ----------------------------------------------------------------------
+#@ # Compat handling for itcl_class/info, set for auto_index loading only
+#@ #
+#@ # Only need to convert public/protected usage.
+#@ # Uses Tcl 8.4+ coding style
+#@ #
+#@ 
+#@ if {([llength [info commands itcl_class]] == 0)
+#@     && [package vsatisfies $::tcl_version 8.4]} {
+#@     proc ::itcl::CmdSplit {body} {
+#@ 	# DGP's command split
+#@ 	set commands {}
+#@ 	set chunk ""
+#@ 	foreach line [split $body "\n"] {
+#@ 	    append chunk $line
+#@ 	    if {[info complete "$chunk\n"]} {
+#@ 		# $chunk ends in a complete Tcl command, and none of the
+#@ 		# newlines within it end a complete Tcl command.  If there
+#@ 		# are multiple Tcl commands in $chunk, they must be
+#@ 		# separated by semi-colons.
+#@ 		set cmd ""
+#@ 		foreach part [split $chunk ";"] {
+#@ 		    append cmd $part
+#@ 		    if {[info complete "$cmd\n"]} {
+#@ 			set cmd [string trimleft $cmd]
+#@ 			# Drop empty commands and comments
+#@ 			if {($cmd ne "") && ![string match #* $cmd]} {
+#@ 			    lappend commands $cmd
+#@ 			}
+#@ 			if {[string match #* $cmd]} {
+#@ 			    set cmd "#;"
+#@ 			} else {
+#@ 			    set cmd ""
+#@ 			}
+#@ 		    } else {
+#@ 			# No complete command yet.
+#@ 			# Replace semicolon and continue
+#@ 			append cmd ";"
+#@ 		    }
+#@ 		}
+#@ 		set chunk ""
+#@ 	    } else {
+#@ 		# No end of command yet.  Put the newline back and continue
+#@ 		append chunk "\n"
+#@ 	    }
+#@ 	}
+#@ 	if {[string trim $chunk] ne ""} {
+#@ 	    return -code error "Can't parse body into a                sequence of commands.\n\tIncomplete command:\n$chunk"
+#@ 	}
+#@ 	return $commands
+#@     }
+#@ 
+#@     proc ::itcl::itcl_class {className body} {
+#@ 	# inherit baseClass ?baseClass...? ; # no change
+#@ 	# constructor args ?init? body     ; # no change
+#@ 	# destructor body                  ; # no change
+#@ 	# method name args body            ; # no change
+#@ 	# proc name args body              ; # no change
+#@ 	# common varName ?init?            ; # no change
+#@ 	# public varName ?init? ?config?   ; # variable ...
+#@ 	# protected varName ?init?         ; # variable ... (?)
+#@ 	set cmds [::itcl::CmdSplit $body]
+#@ 	set newcmds [list]
+#@ 	foreach cmd $cmds {
+#@ 	    if {![catch {lindex $cmd 0} firstcmd]} {
+#@ 		if {$firstcmd eq "public" || $firstcmd eq "protected"} {
+#@ 		    set cmd [linsert $cmd 1 "variable"]
+#@ 		}
+#@ 	    }
+#@ 	    append newcmds "$cmd\n"
+#@ 	}
+#@ 	return [uplevel 1 [list ::itcl::class $className $newcmds]]
+#@     }
+#@     set ::auto_index(itcl_class) [list interp alias {} ::itcl_class {} ::itcl::itcl_class]
+#@     set ::auto_index(itcl_info) [list interp alias {} ::itcl_info {} ::itcl::find]
+#@ }
+#@ 
+#@ # ----------------------------------------------------------------------
+#@ # [namespace inscope]
+#@ # ----------------------------------------------------------------------
+#@ # Modify [unknown] to handle Itcl's usage of [namespace inscope]
+#@ #
+#@ 
+#@ namespace eval ::itcl {
+#@     variable UNKNOWN_ADD_84 {
+#@ 	#######################################################################
+#@ 	# ADDED BY Itcl
+#@ 	# Itcl requires special handling for [namespace inscope]
+#@ 	#
+#@ 	set cmd [lindex $args 0]
+#@ 	if {[regexp "^:*namespace\[ \t\n\]+inscope" $cmd] && [llength $cmd] == 4} {
+#@ 
+#@ 	    set arglist [lrange $args 1 end]
+#@ 	    set ret [catch {uplevel 1 ::$cmd $arglist} result]
+#@ 	    if {$ret == 0} {
+#@ 		return $result
+#@ 	    } else {
+#@ 		return -code $ret -errorcode $::errorCode $result
+#@ 	    }
+#@ 	}
+#@ 	#######################################################################
+#@     }
+#@     variable UNKNOWN_ADD_85 {
+#@ 	#######################################################################
+#@ 	# ADDED BY Itcl
+#@ 	# Itcl requires special handling for [namespace inscope]
+#@ 	#
+#@ 	set cmd [lindex $args 0]
+#@ 	if {[regexp "^:*namespace\[ \t\n\]+inscope" $cmd] && [llength $cmd] == 4} {
+#@ 	    #return -code error "You need an {*}"
+#@ 	    set arglist [lrange $args 1 end]
+#@ 	    set ret [catch {uplevel 1 ::$cmd $arglist} result opts]
+#@ 	    dict unset opts -errorinfo
+#@ 	    dict incr opts -level
+#@ 	    return -options $opts $result
+#@ 	}
+#@ 	#######################################################################
+#@     }
+#@     if {[package vsatisfies [package provide Tcl] 8.5]} {
+#@ 	proc ::unknown args "$UNKNOWN_ADD_85\n[info body ::unknown]"
+#@     } else {
+#@ 	proc ::unknown args "$UNKNOWN_ADD_84\n[info body ::unknown]"
+#@     }
+#@ }
+#@ # -- End source /tools/synopsys_14.15/pt/auxx/tcllib/lib/itcl3.4/itcl.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ update_timing -full
+#@ 
+#@ report_timing -sort_by slack
+#@ 
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+get_cells
+man get_object_name
+get_cells
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ update_timing -full
+#@ 
+#@ report_timing -sort_by slack
+#@ 
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ k######################################################################
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ k######################################################################
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ k######################################################################
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+get_object_name [get_cells]
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ update_timing -full
+#@ 
+#@ report_timing -sort_by slack
+#@ get_object_name [get_cells]
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ update_timing -full
+#@ 
+#@ report_timing -sort_by slack
+#@ get_object_name [get_cells]
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+man paht_time -full
+man paht_type full
+man paht_type
+man path_type
+man get_cells
+man get_cells
+man collection
+man collections
+man attribute
+man get_attribute
+get_attribute {get_cells}
+get_cells -slack
+get_cells -sort_by_slack
+get_cells -sort_by slack
+get_pins
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ k######################################################################
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ update_timing -full
+#@ 
+#@ report_timing -sort_by slack
+#@ get_object_name [get_cells]
+#@ get_object_name [get_pins]
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ timing_source_pin_arrival_and_slack
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ update_timing -full
+#@ 
+#@ report_timing -sort_by slack
+#@ get_object_name [get_cells]
+#@ get_object_name [get_pins]
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+man timing_save_arrival_and_slack
+man timing_save_pin_arrival_and_slack
+timing_save_pin_arrival_and_slack
+set timing_save_pin_arrival_and_slack true
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ update_timing -full
+#@ 
+#@ report_global_slack
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ timing_save_pin_arrival_and_slack
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+man timing_save_pin_arrival_and_slack
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+man get_a
+man get_attribute
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ foreach_in_collection PIN [get_pins]{
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+error_info
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ foreach_in_collection PIN [get_pins]{
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+man get_attribute
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ foreach_in_collection PIN [get_pins *]{
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+get_attribute [get_pin] max_slack
+get_pins
+get_object_name [get_pins]
+man foreach_in_collection
+man echo
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ foreach_in_collection PIN [get_pins *]{
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+man foreach_in_collection
+man foreach_in_collection
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ foreach_in_collection PIN [get_pins]{
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ foreach_in_collection PIN [get_pins]{
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ foreach_in_collection PIN [get_pins] {
+#@   puts "ciao"
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+get_attribute [get_pin] full_name
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "PIN_Name [get_attribute $PIN full_name] \t "
+#@   echo " slack = [get_attribute $PIN max_slack ] \t"
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "PIN_Name [get_attribute $PIN cell_name] \t "
+#@   echo " slack = [get_attribute $PIN max_slack ] \t"
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+get_pins list_attribut
+get_pins list_attribute
+list_attributes attributes.txt
+man -list_attribute
+man list_attribute
+list_attributes -application -class get_cells
+list_attributes -application -class get_pins
+list_attributes -application -class pin
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "PIN_Name [get_attribute $PIN cell] \t "
+#@   echo " slack = [get_attribute $PIN max_slack ] \t"
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "PIN_Name [get_object_name[get_attribute $PIN cell]] \t "
+#@   echo " slack = [get_attribute $PIN max_slack ] \t"
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+list_attributes -application -class pin
+get_attribute [get_cells] cell
+list_attributes -application -class cell
+get_attribute [get_cells] max_slack
+man slack
+man max_slack
+list_attributes -application -class pin
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "PIN_Name [get_attribute[get_attribute $PIN cell] full_name ] \t "
+#@   echo " slack = [get_attribute $PIN max_slack ] \t"
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+get_attribute [get_pins] cell
+get_attribute [get_pins] cell
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "PIN_Name [get_attribute $PIN cell] \t "
+#@   echo " slack = [get_attribute $PIN max_slack ] \t"
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+list_attributes -application -class cell
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ 
+#@ set pins_cells  get_attribute [get_pins] cell
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ 
+#@ get_attribute [get_pins] cell
+#@ 
+#@ foreach_in_collection PIN [get_pins] {
+#@   #echo -n "Cell =[get_attribute $PIN    \t "
+#@   echo " slack = [get_attribute $PIN max_slack ] \t"
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ 
+#@ #get_attribute [get_pins] cell
+#@ 
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "Cell =[get_attribute $PIN cell   ]\t " 
+#@   echo " slack = [get_attribute $PIN max_slack ] \t"
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+get_atrribute [get_pins] cell
+get_attribute  [get_pins] cell
+get_atrribute [get_pins] ceman get_att
+man get_attribute
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ 
+#@ #get_attribute [get_pins] cell
+#@ 
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "Cell =[get_attribute [get_attribute $PIN cell ]full_name]   \t "
+#@   echo " slack = [get_attribute $PIN max_slack ] \t"
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+get_attribute  [get_pins] cell
+get_attribute [get_attribute  [get_pins] cell] full_name
+set _lista "get_attribute [get_attribute  [get_pins] cell] full_name"
+set _lista " [get_attribute [get_attribute  [get_pins] cell] full_name]"
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ 
+#@ #get_attribute [get_pins] cell
+#@ set pins_celle " [get_attribute [get_attribute  [get_pins] cell] full_name]" 
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "Cell = $pins_celle[lindex $PIN]   \t "
+#@   echo " slack = [get_attribute $PIN max_slack ] \t"
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+set _lista " [get_attribute [get_attribute  [get_pins] cell] full_name]"man lindex
+man lindex
+list_attributes -application -class cell
+man lindex
+set lista " [get_attribute [get_attribute  [get_pins] cell] full_name]"man lindex
+set lista " [get_attribute [get_attribute  [get_pins] cell] full_name]"
+lista $lindex 1
+puts lista[llindex]
+puts lista [lindex 1]
+error_info
+lappend lista " [get_attribute [get_attribute  [get_pins] cell] full_name]"
+puts lista [lindex 1]
+lappend lista " [get_attribute [get_attribute  [get_pins] cell] full_name]"
+set lista " [get_attribute [get_attribute  [get_pins] cell] full_name]"
+man list
+list lista " [get_attribute [get_attribute  [get_pins] cell] full_name]"
+puts lista [lindex 1]
+split $lista
+abc def ghi
+Defininition of White-Space Characters  edit
+ulis: where in the doc are defined the standard white-space characters?
+DKF: I believe there's a standard (ANSI? POSIX?) somewhere. But the answer includes "space", "tab", and "newline".
+escargo: By "tab" do you mean both horizontal tab (ASCII 9) and vertical tab (ASCII 11)? (See http://www.asciitable.com/) Arguments could be made for most of the ASCII characters under 33.
+Strick: Let's ask Tcl what it thinks are white:
+$ env | grep en_
+LANG=en_US.UTF-8
+$ cat what-chars-does-split-think-are-white.tcl
+for {set i 0} {$i<65536} {incr i} {
+  if {[llength [format "/%c/" $i]] > 1} { puts -nonewline "$i " }
+}
+$ tclsh what-chars-does-split-think-are-white.tcl
+9 10 11 12 13 32 $
+escargo 2005-04-01 :
+9 = ASCII TAB, 10 = ASCII LF (line feed), 11 = ASCII VT (vertical tab), 12 = ASCII FF (form feed), 13 = ASCII CR (carriage return), and of course 32 = ASCII Space.
+I would have thought that the separator characters would count as white space (28-31, FS, GS, RS, US), but I guess they are regarded as "nonprinting" characters.
+DKF: I actually mean "what does isspace() think is whitespace". :^)
+Strick: Oops, i forgot to actually use split in my script above. So now I test four different notions of white, and get three different answers. I understand why Tcl's builtin list-splitting rules must be fixed, regardless of locale. But it seems 'split' should use the list-splitting rule or the the string is space rule, but it uses its own (pre-unicode?) rule:
+$ cat what-chars-does-split-think-are-white.tcl
+puts "tcl=[info patch] LANG=$env(LANG)"
+puts -nonewline {according to llength: }
+for {set i 0} {$i<65536} {incr i} {
+  if {[llength [format "/%c/" $i]] > 1} { puts -nonewline "$i " }
+}
+puts {}
+puts -nonewline {according to split: }
+for {set i 0} {$i < 65536} {incr i} {
+  if {[llength [split [format /%c/ $i]]] > 1} { puts -nonewline "$i " }
+}
+puts {}
+puts -nonewline {according to 'string is space': }
+for {set i 0} {$i < 65536} {incr i} {
+  if {[string is space [format %c $i]]} { puts -nonewline "$i " }
+}
+puts {}
+puts -nonewline {according to regexp {\s}: }
+for {set i 0} {$i < 65536} {incr i} {
+  if {[regexp {\s} [format "%c" $i]]} { puts -nonewline "$i " }
+}
+puts {}
+$
+$ tclsh what-chars-does-split-think-are-white.tcl
+tcl=8.4.7 LANG=en_US.UTF-8
+according to llength: 9 10 11 12 13 32
+according to split: 9 10 13 32
+according to 'string is space': 9 10 11 12 13 32 160 5760 8192 8193 8194 8195 8196 8197 8198 8199 8200 8201 8202 8203 8232 8233 8239 12288
+according to regexp {\s}: 9 10 11 12 13 32 160 5760 8192 8193 8194 8195 8196 8197 8198 8199 8200 8201 8202 8203 8232 8233 8239 12288
+$
+escargo 2006-01-27: If split used chars 9 10 11 12 13 32 then there would be only two sets, with the smaller set as a proper subset of the larger set. The two characters that would have to be added are the vertical tab and form feed.
+Splitting on Substrings  edit
+splitChars is a series of 0 to n individual characters. However, if you want to split on a specific sequence of 2 or more characters together, or if you want to split on a regular expression, split will not work for you. See Tcllib's textutil::splitx, or ycl::string::delimit for that functionality.
+SS 2004-01-31: Or you can use the following function:
+proc wsplit {string sep} {
+    set first [string first $sep $string]
+    if {$first == -1} {
+        return [list $string]
+    } else {
+        set l [string length $sep]
+        set left [string range $string 0 [expr {$first-1}]]
+        set right [string range $string [expr {$first+$l}] end]
+        return [concat [list $left] [wsplit $right $sep]]
+    }
+}
+This version is recursive, so it may be better to rewrite it if you plan to use the function against very long strings with many separators. The difference between wsplit and splitx is that splitx uses regexp, so it may create problems with unknown separators.
+IL 2005-01-03: on the near anniversary of this proc, the iterative version, quick-n-dirty since I'm in a hurry to parse some html...
+proc wsplit { str sepStr } {
+   set strList   {}
+   set sepLength [string length $sepStr]
+   while {[set index [string first $sepStr $str]] != -1} {
+       set left [string range $str 0 [expr {$index + $sepLength - 1}]]
+       set str  [string range $str [expr {$index + $sepLength + 1}] end]
+       lappend strList $left
+   }
+   return $strList
+}
+hmm use this version instead, the string first doesn't catch strings sepstrs connected to the ones you want
+proc wsplit {str sepStr} {
+    if {![regexp $sepStr $str]} {
+        return $str}
+    set strList {}
+    set pattern (.*?)$sepStr
+    while {[regexp $pattern $str match left]} {
+        lappend strList $left
+        regsub $pattern $str {} str
+    }
+    lappend strList $str
+    return $strList
+}
+RS writes recently:
+Note that the wsplit can be done simpler:
+map the separating string to a single char that cannot appear in the string
+split on that single char
+proc wsplit {str sep} {
+  split [string map [list $sep \0] $str] \0
+}
+% wsplit This<>is<>a<>test. <>
+This is a test.
+Sarnold 2006-06-21: Sarnold Here is my version of wsplit:
+proc wsplit {str sep} {
+    set out {}
+    set sepLen [string length $sep]
+    if {$sepLen < 2} {
+        return [split $str $sep]
+    }
+    while {[set idx [string first $sep $str]] >= 0} {
+        # the left part : the current element
+        lappend out [string range $str 0 [expr {$idx-1}]]
+        # get the right part and iterate with it
+        set str [string range $str [incr idx $sepLen] end]
+    }
+    # there is no separator anymore, but keep in mind the right part must be
+    # appended
+    lappend out $str
+}
+escargo: So what should you use when you don't care how many spaces were between tokens, you just want the non-blank tokens in the list and none of the separators?
+RS: Easy, just use a filter:
+proc filter {cond list} {
+    set res {}
+    foreach element $list {
+        if {[$cond $element]} {
+            lappend res $element
+        }
+    }
+    set res
+}
+% filter llength [split "a   list   with many   spaces"]
+a list with many spaces
+... or use
+% split [regsub -all {[ \t\n]+} "a   list   with many   spaces" { }]
+to eliminate the excess white space ...
+... or use
+% lreplace "a   list   with many   spaces" 0 -1
+to force reinterpretation as a list ...
+Caveat: Byte Arrays  edit
+RS 2006-07-04: When you split on {} on a byte array, it may be surprising that the result may contain unscannable characters for \x00 bytes. I had to work around like this:
+proc hexdump str {
+    set res {}
+    foreach c [split $str {}] {
+        set i [scan $c %c]
+        if {$i eq {}} {set i 0} ;#<--------------------- here
+        lappend res [format %02x $i]
+    }
+    return $res
+}
+Protecting Separators  edit
+Sometimes you want to be able to insert one of the separators anyway, but still split on all "unprotected" separators. The following procedure will do that.
+proc psplit { str seps {protector "\\"}} {
+    set out [list]
+    set prev ""
+    set current ""
+    foreach c [split $str ""] {
+        if { [string first $c $seps] >= 0 } {
+            if { $prev eq $protector } {
+                set current [string range $current 0 end-1]
+                append current $c
+            } else {
+                lappend out $current
+                set current ""
+            }
+            set prev ""
+        } else {
+            append current $c
+            set prev $c
+        }
+    }
+    if { $current ne "" } {
+        lappend out $current
+    }
+    return $out
+}
+So splitting the string I intend to use the character \. to separate between sentences. And can demonstrate it! on . would return a list with two elements only:
+set str {I intend to use the character \. to separate between sentences. And can demonstrate it!}
+puts [psplit $str .]
+would print out
+{I intend to use the character . to separate between sentences} { And can demonstrate it!}
+PYK 2014-03-02: There was previously a discussion by escargo here that made no sense to me, so I've removed it. If someone sees the point of that discussion, please bring it back!
+Category CommandCategory String Processing
+Home
+Recent changes
+Help
+WhoAmI/Logout
+Create new page
+Random page
+Previous page
+Next page
+Add comments
+Edit
+History
+Edit summary
+References
+Search
+Page contents
+Synopsis
+Documentation
+Description
+See also
+Examples
+Splitting by dots
+Splitting into characters
+Splitting by whitespace: the pitfalls
+Defininition of White-Space Characters
+Splitting on Substrings
+Caveat:  Byte Arrays
+Protecting Separators
+Getting started
+What is Tcl?
+What is Tk?
+Getting Tcl/Tk
+Getting help
+Learning Tcl
+Tcl Dev Xchange
+About the Wiki
+Community
+Advocacy
+Conferences
+Chat, news, lists
+History
+Humor
+People
+Tcl websites
+Reference
+Companies
+Getting help
+Online books
+Online tutorials
+Manual pages
+list lista " [get_attribute [get_attribute  [get_pins] cell] full_name]"
+list_attributes -application -class cell
+list lista " [get_attribute [get_attribute  [get_pins] cell] full_name]"
+regexp -all -inline {\S+} $lista
+lindex $lista $1
+lindex $lista 1
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ 
+#@ #get_attribute [get_pins] cell
+#@ list  pins_celle " [get_attribute [get_attribute  [get_pins] cell] full_name]" 
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "Cell = [lindex $pins_celle $PIN]   \t "
+#@   echo " slack = [get_attribute $PIN max_slack ] \t"
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ 
+#@ #get_attribute [get_pins] cell
+#@ list  pins_celle " [get_attribute [get_attribute  [get_pins] cell] full_name]" 
+#@ foreach_in_collection PIN [get_pins] {
+#@   #echo -n "Cell = [lindex $pins_celle $PIN]   \t "
+#@   echo -n "Cell = $PIN   \t "
+#@   echo " slack = [get_attribute $PIN max_slack ] \t"
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ 
+#@ #get_attribute [get_pins] cell
+#@ list  pins_celle " [get_attribute [get_attribute  [get_pins] cell] full_name]" 
+#@ set indice 0
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "Cell = [lindex $pins_celle $indice]   \t "
+#@   echo " slack = [get_attribute $PIN max_slack ] \t"
+#@   incr indice
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+list_attributes -application -class cell
+list_attributes -application -class pins
+list_attributes -application -class pin
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ 
+#@ #get_attribute [get_pins] cell
+#@ list  pins_celle " [get_attribute [get_attribute  [get_pins] cell] full_name]" 
+#@ set indice 0
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "Cell = [lindex $pins_celle $indice]   \t "
+#@   echo "  pin  = [get_attribute $PIN full_name ] \t"
+#@   echo " slack = [get_attribute $PIN max_slack ] \t"
+#@   incr indice
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+get_attribute [get_pins] net
+list_attributes -application -class net
+man net
+man pin
+man class
+man classes
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ 
+#@ #get_attribute [get_pins] cell
+#@ list  pins_celle " [get_attribute [get_attribute  [get_pins] cell] full_name]" 
+#@ set indice 0
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "Cell = [lindex $pins_celle $indice]   \t "
+#@   echo "  pin  = [get_attribute $PIN full_name ] \t"
+#@   echo " slack = [get_attribute $PIN max_slack ] "
+#@   incr indice
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ 
+#@ #get_attribute [get_pins] cell
+#@ list  pins_celle " [get_attribute [get_attribute  [get_pins] cell] full_name]" 
+#@ set indice 0
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "Cell = [lindex $pins_celle $indice]   \t "
+#@   echo "  pin  = [get_attribute $PIN full_name ] \t"
+#@   echo " slack = [get_attribute $PIN max_slack ] "
+#@   incr indice
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set link_library [lappend lindex $libraries 4]
+#@ # -- End source ./tech/STcmos65/synopsys_pt.setup
+
+#@ 
+#@ # DEFINE OPTIONS
+#@ set report_default_significant_digits 6
+#@ set power_enable_analysis true
+#@ 
+#@ # SUPPRESS WARNING MESSAGES
+#@ suppress_message RC-004
+#@ suppress_message PTE-003
+#@ suppress_message UID-401
+#@ suppress_message ENV-003
+#@ suppress_message UITE-489
+#@ suppress_message CMD-041
+#@ ######################################################################
+#@ ## READ DESIGN
+#@ ######################################################################
+#@ # DEFINE CIRCUITS
+#@ set blockName "c1908"
+#@ 
+#@ # DEFINE INPUT FILES
+#@ set dir "./saved/${blockName}/synthesis"
+#@ set in_verilog_filename "${dir}/${blockName}_postsyn.v"
+#@ set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
+#@ 
+#@ # READ
+#@ read_verilog $in_verilog_filename
+#@ read_sdc -version 1.3 $in_sdc_filename
+#@ 
+#@ #set timing_save_pin_arrival_and_slack 1
+#@ update_timing -full
+#@ 
+#@ report_global_slack -max
+#@ #report_timing -sort_by slack
+#@ #get_object_name [get_cells]
+#@ #get_object_name [get_pins]
+#@ 
+#@ #get_attribute [get_pins] cell
+#@ list  pins_celle " [get_attribute [get_attribute  [get_pins] cell] full_name]" 
+#@ set indice 0
+#@ foreach_in_collection PIN [get_pins] {
+#@   echo -n "Cell = [lindex $pins_celle $indice]   \t "
+#@   echo "  pin  = [get_attribute $PIN full_name ] \t "
+#@   echo "  slack = [get_attribute $PIN max_slack ] "
+#@   incr indice
+#@ }
+#@ # -- End source ./scripts/pt_giannimorandi.tcl
+
+source ./scripts/pt_giannimorandi.tcl
+#@ # -- Starting source ./scripts/pt_giannimorandi.tcl
+
+#@ ######################################################################
+#@ ## SPECIFY LIBRARIES
+#@ ######################################################################
+#@ 
+#@ # SOURCE SETUP FILE
+#@ source "./tech/STcmos65/synopsys_pt.setup"
+#@ # -- Starting source ./tech/STcmos65/synopsys_pt.setup
+
+#@ set technology "STcmos65"
+#@ set search_path ""
+#@ lappend search_path "./tech/${technology}"
+#@ 
+#@ set libraries ""
+#@ set libraries [lappend libraries "CORE65LPSVT_bc_1.30V_m40C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_wc_1.10V_125C.db"]
+#@ set libraries [lappend libraries "CORE65LPSVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPLVT_nom_1.20V_25C.db"]
+#@ set libraries [lappend libraries "CORE65LPHVT_nom_1.20V_25C.db"]
+#@ 
+#@ 
+#@ set link_libraries ""
+#@ set link_library [lappend lindex $libraries 3]
+#@ set li

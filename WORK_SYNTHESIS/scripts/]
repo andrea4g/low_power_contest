@@ -1,0 +1,66 @@
+proc report_design_slack_information {} {
+  set design_tns 0
+  set design_wns 100000
+  set design_tps 0
+  foreach_in_collection group [get_path_groups *] {
+    set group_tns 0
+    set group_wns 100000
+    set group_tps 0
+    foreach_in_collection path [get_timing_paths -nworst 10000 -group $group] {
+      set slack [get_attribute $path slack]
+      if {$slack < $group_wns} {
+        set group_wns $slack
+        if {$slack < $design_wns} {
+          set design_wns $slack
+        }
+      }
+      if {$slack < 0.0} {
+        set group_tns [expr $group_tns + $slack]
+      } else {
+        set group_tps [expr $group_tps + $slack]
+      }
+    }
+    set design_tns [expr $design_tns + $group_tns]
+    set design_tps [expr $design_tps + $group_tps]
+    set group_name [get_attribute $group full_name]
+    echo [format "Group '%s' Worst Negative Slack : %g" $group_name $group_wns]
+    echo [format "Group '%s' Total Negative Slack : %g" $group_name $group_tns]
+    echo [format "Group '%s' Total Positive Slack : %g" $group_name $group_tps]
+    echo ""
+  }
+  echo "------------------------------------------"
+  echo [format "Design Worst Negative Slack : %g" $design_wns]
+  echo [format "Design Total Negative Slack : %g" $design_tns]
+  echo [format "Design Total Positive Slack : %g" $design_tps]
+}
+
+proc custom_report_worst_path_per_group {} {
+  echo [format "%-20s %-20s %7s" "From" "To" "Slack"]
+  echo "--------------------------------------------------------"
+  foreach_in_collection path [get_timing_paths] {
+    set slack [get_attribute $path slack]
+    set startpoint [get_attribute $path startpoint]
+    set endpoint [get_attribute $path endpoint]
+    echo [format "%-20s %-20s %s" [get_attribute $startpoint full_name] \
+    [get_attribute $endpoint full_name] $slack]
+  }
+}
+
+proc custom_report_worst_paths_per_group {numberOfPaths} {
+  set blockName "c432"
+  set dirname "./saved/${blockName}"
+  set filename "${dirname}/${blockName}_critical_paths.rpt"
+  set fileId [open $filename "w"]
+
+  foreach_in_collection path [get_timing_paths -nworst $numberOfPaths] {
+    set slack [get_attribute $path slack]
+    set points [get_attribute $path points]
+    puts $fileId "\n\nNew path"
+    puts $fileId $slack
+    foreach_in_collection point $points {
+      puts -nonewline $fileId [get_attribute $point full_name]
+      puts -nonewline " "
+    }
+  }
+  close $fileId
+}

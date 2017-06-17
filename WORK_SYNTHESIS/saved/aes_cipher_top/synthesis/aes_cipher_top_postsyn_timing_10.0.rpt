@@ -1,0 +1,71 @@
+Information: Updating design information... (UID-85)
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : aes_cipher_top
+Version: J-2014.09-SP2
+Date   : Sat Jun 10 18:22:07 2017
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: nom_1.20V_25C   Library: CORE65LPSVT
+Wire Load Model Mode: enclosed
+
+  Startpoint: clk_r_REG839_S10
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: clk_r_REG686_S9
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  aes_cipher_top     area_12Kto18K         CORE65LPSVT
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                               0.000000   0.000000
+  clock network delay (ideal)                         0.050000   0.050000
+  clk_r_REG839_S10/CP (HS65_LS_DFPQX4)                0.000000 # 0.050000 r
+  clk_r_REG839_S10/Q (HS65_LS_DFPQX4)                 0.112929   0.162929 f
+  U21798/Z (HS65_LS_NOR3X1)                           0.184533   0.347462 r
+  U19605/Z (HS65_LSS_XOR2X3)                          0.211771   0.559233 r
+  U17815/Z (HS65_LS_IVX9)                             0.082601   0.641834 f
+  U21624/Z (HS65_LS_BDECNX4)                          0.130592   0.772426 r
+  U21623/Z (HS65_LSS_XOR2X3)                          0.090099   0.862525 f
+  U21622/Z (HS65_LS_OAI21X2)                          0.239123   1.101648 r
+  U18581/Z (HS65_LS_IVX9)                             0.133949   1.235597 f
+  U21632/Z (HS65_LS_NAND2X2)                          0.158593   1.394190 r
+  U23639/Z (HS65_LS_NOR3X3)                           0.198477   1.592667 f
+  U25251/Z (HS65_LS_IVX2)                             0.265112   1.857779 r
+  U22557/Z (HS65_LS_NOR2X2)                           0.134860   1.992639 f
+  U25360/Z (HS65_LS_AOI112X1)                         0.113940   2.106580 r
+  U14261/Z (HS65_LS_OAI211X5)                         0.070172   2.176752 f
+  U14260/Z (HS65_LS_AOI112X4)                         0.072900   2.249652 r
+  U14259/Z (HS65_LS_OAI211X5)                         0.062844   2.312496 f
+  U23644/Z (HS65_LS_NOR4ABX2)                         0.098959   2.411455 r
+  U24824/Z (HS65_LS_NAND3X2)                          0.093585   2.505039 f
+  U24773/Z (HS65_LS_NOR4ABX2)                         0.224477   2.729516 r
+  U24664/Z (HS65_LSS_XNOR2X3)                         0.196951   2.926467 f
+  U23881/Z (HS65_LS_BDECNX4)                          0.167729   3.094196 f
+  clk_r_REG686_S9/D (HS65_LS_DFPQX4)                  0.000015   3.094211 f
+  data arrival time                                              3.094211
+
+  clock clk (rise edge)                               10.000000  10.000000
+  clock network delay (ideal)                         0.050000   10.050000
+  clock uncertainty                                   -0.050000  10.000000
+  clk_r_REG686_S9/CP (HS65_LS_DFPQX4)                 0.000000   10.000000 r
+  library setup time                                  -0.072654  9.927346
+  data required time                                             9.927346
+  --------------------------------------------------------------------------
+  data required time                                             9.927346
+  data arrival time                                              -3.094211
+  --------------------------------------------------------------------------
+  slack (MET)                                                    6.833136
+
+
+1
