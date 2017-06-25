@@ -44,8 +44,8 @@ read_sdc -version 1.3 $in_sdc_filename
 ##############################################################
 
 update_timing -full
-set_HVT_LVT > $output
-report_global_slack -max > $output
+set_HVT_LVT > /dev/null
+report_global_slack -max > /dev/null
 
 ##############################################################
 # HVT_map procedure
@@ -60,9 +60,6 @@ proc dualVth {args} {
   } else {
     set cycles 5
   }
-
-  # Redirect output
-  set output /dev/null
 
   #################################
   ### INSERT YOUR COMMANDS HERE ###
@@ -110,7 +107,7 @@ proc dualVth {args} {
       set cell_temp [lindex $cell_list $pointer]
       set temp      [lindex $type_cell_list $pointer ]
       set type_temp [string replace $temp 5 6 LH]
-      size_cell $cell_temp CORE65LPHVT_nom_1.20V_25C.db:CORE65LPHVT/$type_temp > $output
+      size_cell $cell_temp CORE65LPHVT_nom_1.20V_25C.db:CORE65LPHVT/$type_temp > /dev/null
     }
 
     update_timing
@@ -150,7 +147,7 @@ proc dualVth {args} {
             set cell_temp [lindex $cell_list $pointer]
             set temp      [lindex $type_cell_list $pointer ]
             set type_temp [string replace $temp 5 6 LL]
-            size_cell $cell_temp CORE65LPLVT_nom_1.20V_25C.db:CORE65LPLVT/$type_temp > $output
+            size_cell $cell_temp CORE65LPLVT_nom_1.20V_25C.db:CORE65LPLVT/$type_temp > /dev/null
           }
 
           update_timing
