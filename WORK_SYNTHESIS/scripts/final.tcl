@@ -169,37 +169,29 @@ proc CharacterizeScript {} {
   update_power
   set leakage_start [get_attribute [get_design] leakage_power]
   for {set percentage 1} {$percentage < 100} {incr percentage 5} {
-    for {set effort 1} {$effort < 30} {incr effort} {
       set lvt_percentage [expr { $percentage / 100.0 } ]
       set TIME_start [clock clicks -milliseconds]
-      dualVth -lvt $lvt_percentage -constraint soft -cycles $effort
+      dualVth -lvt $lvt_percentage -constraint soft 
       set time_op [expr {[clock clicks -milliseconds] - $TIME_start}]
       update_power
       set leakage [get_attribute [get_design] leakage_power]
       set LVT_number [sizeof_collection [get_cells -filter "@lib_cell.threshold_voltage_group == LVT"]]
       set HVT_number [sizeof_collection [get_cells -filter "@lib_cell.threshold_voltage_group == HVT"]]
-      echo $percentage "; " $effort "; " $time_op "; " $leakage "; " $LVT_number "; " $HVT_number >> saved/soft1.csv
+      echo $percentage "; " $time_op "; " $leakage "; " $LVT_number "; " $HVT_number >> saved/soft1.csv
       LVT_restore
-    }
-  echo $percentage
   }
-
-
-  dualVt -lvt 0.1 -constraint hard -cycles 30
   
   for {set percentage 1} {$percentage < 100} {incr percentage 5} {
-    for {set effort 1} {$effort < 30} {incr effort} {
       set lvt_percentage [expr { $percentage / 100.0 } ]
       set TIME_start [clock clicks -milliseconds]
-      dualVt -lvt $lvt_percentage -constraint hard -cycles $effort
+      dualVt -lvt $lvt_percentage -constraint hard 
       set time_op [expr {[clock clicks -milliseconds] - $TIME_start}]
       update_power
       set leakage [get_attribute [get_design] leakage_power]
       set LVT_number [sizeof_collection [get_cells -filter "@lib_cell.threshold_voltage_group == LVT"]]
       set HVT_number [sizeof_collection [get_cells -filter "@lib_cell.threshold_voltage_group == HVT"]]
-      echo $lvt_percentage "; " $effort "; " $time_op "; " $leakage "; " $LVT_number "; " $HVT_number >> saved/hard1.csv
+      echo $lvt_percentage "; " $time_op "; " $leakage "; " $LVT_number "; " $HVT_number >> saved/hard1.csv
       LVT_restore
-    }
   }
 }
 
