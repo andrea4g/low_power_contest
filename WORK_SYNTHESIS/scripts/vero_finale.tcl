@@ -38,37 +38,40 @@ proc set_HVT_LVT {} {
 # READ
 read_verilog $in_verilog_filename
 read_sdc -version 1.3 $in_sdc_filename
-  
+
 ##############################################################
 # ANALYSIS
 ##############################################################
 
-set timing_save_pin_arrival_and_slack true 
 update_timing -full
 set_HVT_LVT > $output
-report_global_slack -max > $output 
+report_global_slack -max > $output
 
 ##############################################################
 # HVT_map procedure
 ##############################################################
 
 proc dualVth {args} {
-	parse_proc_arguments -args $args results
-	set lvt $results(-lvt)
-	set constraint $results(-constraint)
-	set cycles
+  parse_proc_arguments -args $args results
+  set lvt $results(-lvt)
+  set constraint $results(-constraint)
+  if {constraint == soft} {
+    set cycles 15
+  } else {
+    set cycles 5
+  }
 
   # Redirect output
   set output /dev/null
 
-	#################################
-	### INSERT YOUR COMMANDS HERE ###
-	#################################
+  #################################
+  ### INSERT YOUR COMMANDS HERE ###
+  #################################
 
   # Compute number of cells that must be swapped to HVT
   set number_of_cells [sizeof_collection [get_cell]]
   set percentage_lvt [expr {int($lvt * 100)}]
-  set number_hvt  [expr {(100 - $percentage_lvt) * $number_of_cells / 100 }]  
+  set number_hvt  [expr {(100 - $percentage_lvt) * $number_of_cells / 100 }]
   set N [expr {$number_hvt/$cycles}]
   if {$N < 1} {
     set N 1
@@ -79,23 +82,23 @@ proc dualVth {args} {
   ###########################
   # Create 2 lists ordered by slack
   ###########################
-  
+
   while {$remaining > 0} {
     set lvt_pins [get_pins -filter "@cell.lib_cell.threshold_voltage_group == LVT"]
-    # take pins collection and sort by slack 
+    # take pins collection and sort by slack
     set sorted_pins_collection [sort_collection $lvt_pins {max_slack}]
     # eliminate multiple cells
     set cell_unmasked [get_attribute $sorted_pins_collection cell]
     set cell [index_collection $cell_unmasked 0]
     append_to_collection cell $cell_unmasked -unique
-    # now cell_unmasked contains a collection of cells sorted from lower to higher slack 
+    # now cell_unmasked contains a collection of cells sorted from lower to higher slack
     set cell_list      [get_attribute $cell full_name]
     set type_cell_list [get_attribute $cell ref_name]
-    
+
     ###########################
     # Change cells LVT -> HVT #
     ###########################
-    
+
     set coll_length [expr {[sizeof_collection $cell] - 1}]
 
     if {$remaining <= $N} {
@@ -118,17 +121,17 @@ proc dualVth {args} {
       set slack_tot [get_attribute [get_timing_paths] slack]
       if { $slack_tot < 0 } {
         set remaining $N
-        while {$slack_tot < 0} { 
+        while {$slack_tot < 0} {
           set N [expr {($N >> 2) + 1} ]
-      
+
           set hvt_pins [get_pins -filter "@cell.lib_cell.threshold_voltage_group == HVT"]
-          # Take pins collection and sort by slack 
+          # Take pins collection and sort by slack
           set sorted_pins_collection [sort_collection $hvt_pins {max_slack}]
           # Delete repeated cells
           set cell_unmasked [get_attribute $sorted_pins_collection cell]
           set cell [index_collection $cell_unmasked 0]
           append_to_collection cell $cell_unmasked -unique
-          # Now cell_unmasked contains a collection of cells sorted from lower to higher slack 
+          # Now cell_unmasked contains a collection of cells sorted from lower to higher slack
           set cell_list      [get_attribute $cell full_name]
           set type_cell_list [get_attribute $cell ref_name]
 
@@ -156,15 +159,15 @@ proc dualVth {args} {
         break
       }
     }
-  } 
-	return
+  }
+  return
 }
 
 define_proc_attributes dualVth \
 -info "Post-Synthesis Dual-Vth cell assignment" \
 -define_args \
 {
-	{-lvt "maximum % of LVT cells in range [0, 1]" lvt float required}
-	{-constraint "optimization effort: soft or hard" constraint one_of_string {required {values {soft hard}}}}
+  {-lvt "maximum % of LVT cells in range [0, 1]" lvt float required}
+  {-constraint "optimization effort: soft or hard" constraint one_of_string {required {values {soft hard}}}}
 }
 
