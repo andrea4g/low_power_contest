@@ -1,0 +1,121 @@
+2.  Synopsys Commands                                        Command Reference
+                              report_global_slack
+
+NAME
+       report_global_slack
+              Displays slack of specified pins or ports.
+
+SYNTAX
+       string report_global_slack
+              [-significant_digits digits]
+              [-nosplit]
+              [-min]
+              [-max]
+              [-rise]
+              [-fall]
+              port_pin_list
+
+   Data Types
+       digits            integer
+       port_pin_list     list
+
+ARGUMENTS
+       -significant_digits digits
+              Specifies the number of reported digits to the right of the dec-
+              imal point.  Allowed values are 0-13; the default is  determined
+              by the report_default_significant_digits variable, whose default
+              is 2. Use this option if you want to override the default.
+
+       -nosplit
+              Most of the design information is listed in fixed-width columns.
+              If  the  information  for a given field exceeds the width of the
+              column, the next field begins on a new  line,  starting  in  the
+              correct  column.   -nosplit  prevents line splitting and facili-
+              tates writing software to extract information  from  the  report
+              output.
+
+       -min   Displays the minimum slack.
+
+       -max   Displays the maximum slack.
+
+       -rise  Displays rise slack.
+
+       -fall  Displays fall slack.
+
+       port_pin_list
+              Specifies  a  list  of  pins or ports to report. By default, the
+              report contains all pins and ports in the current  design.  Pins
+              of hierarchical cells are not reported.
+
+DESCRIPTION
+       The  report_global_slack  command  displays the slack of specified pins
+       and ports. By default, all pins except those of hierarchical cells  and
+       ports of the design are reported.
+
+       To  report  slacks  throughout  the  current  design arrival totals and
+       slacks must be available on  all  pins,  not  just  at  endpoints.   To
+       achieve  this,  set  the  timing_save_pin_arrival_and_slack variable to
+       true before  issuing  the  report_global_slack  command.  If  the  tim-
+       ing_save_pin_arrival_and_slack  variable has not been set to true.  the
+       command is set it to true and updates the design timing before the com-
+       mand executes.
+
+       The  default  of  the variable is false. If you intend to use this com-
+       mand,    it    is    recommended    that    you    set     the     tim-
+       ing_save_pin_arrival_and_slack variable to true before the first timing
+       update, thus preventing the cost of an additional timing update.
+
+       The -max and -min options are mutually exclusive. The -rise  and  -fall
+       options  are  also  mutually  exclusive. You can choose any combination
+       from the -max or -min option and -rise or -fall option to report a par-
+       ticular slack value.
+
+     o If you specify only the -max option, but not the -rise or -fall option,
+       the tool reports both the maximum rise and maximum fall slack values.
+
+     o If you specify only the -min option, but not the -rise or -fall option,
+       the tool reports both the minimum rise and minimum fall slack values.
+
+     o  If you specify only the -rise option, but not the -max or -min option,
+       the tool reports both the maximum rise and minimum rise slack values.
+
+     o If you specify only the -fall option, but not the -max or -min  option,
+       the tool reports both the maximum fall and minimum fall slack values.
+
+     o  If  you  specify  neither the -rise and -fall options nor the -max and
+       -min options, the tool reports the maximum rise, maximum fall,  minimum
+       rise, and minimum fall slack values.
+
+       If  slack  attribute is not available at a pin or port, the tool prints
+       *.
+
+       Note that this command expects that the design has already  been  timed
+       with the timing_save_pin_arrival_and_slack variable set to true. If the
+       timing_save_pin_arrival_and_slack variable is set  to  its  default  of
+       false,  the   report_global_slack  command  can potentially take longer
+       during runtime.
+
+EXAMPLES
+       The following example generates a report of all slack violations in the
+       current design.
+
+         pt_shell> report_global_slack -significant_digits 4 -nosplit
+         ****************************************
+         Report : report_global_slack
+          ...
+         ****************************************
+
+         Max_Rise      Max_Fall      Min_Rise      Min_Fall   Point
+         ------------------------------------------------------------
+         -1.4869       -1.6330        1.5669        1.7130   ff2/D
+         -1.4869       -1.6330        1.5669        1.7130   in2/Z
+         -1.6330       -1.4869        1.7130        1.5669   in2/A
+         -1.6330       -1.4869        1.7130        1.5669   in1/Z
+
+SEE ALSO
+       report_timing(2)
+       report_default_significant_digits(3)
+       timing_save_pin_arrival_and_slack(3)
+
+                            Version J-2014.12
+            Copyright (c) 2014 Synopsys, Inc. All rights reserved.

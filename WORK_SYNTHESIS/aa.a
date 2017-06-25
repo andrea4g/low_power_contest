@@ -1,0 +1,1726 @@
+****************************************
+Report : List of Attribute Definitions
+Version: J-2014.12
+Date   : Fri Jun 23 22:36:20 2017
+****************************************
+
+Properties:
+    A - Application-defined
+    U - User-defined
+    I - Importable from design/library (for user-defined)
+    S - Settable
+    B - Subscripted
+
+Attribute Name            Object     Type       Properties  Constraints
+--------------------------------------------------------------------------------
+activity_source           net        string     A           
+actual_fall_transition_max
+                          port       float      A           
+actual_fall_transition_max
+                          pin        float      A           
+actual_fall_transition_min
+                          port       float      A           
+actual_fall_transition_min
+                          pin        float      A           
+actual_min_clock_pulse_width_high
+                          port       string     A           
+actual_min_clock_pulse_width_high
+                          pin        string     A           
+actual_min_clock_pulse_width_low
+                          port       string     A           
+actual_min_clock_pulse_width_low
+                          pin        string     A           
+actual_rise_transition_max
+                          port       float      A           
+actual_rise_transition_max
+                          pin        float      A           
+actual_rise_transition_min
+                          port       float      A           
+actual_rise_transition_min
+                          pin        float      A           
+actual_transition_max     port       float      A           
+actual_transition_max     pin        float      A           
+actual_transition_min     port       float      A           
+actual_transition_min     pin        float      A           
+aggressors                net        string     A           
+all_siblings              category_node
+                                     collection A           
+always_on                 lib_cell   boolean    A           
+analysis_type             design     string     A           
+annotated_delay_delta     timing_point
+                                     float      A           
+annotated_delay_delta_max net        float      A           
+annotated_delay_delta_max timing_arc float      A           
+annotated_delay_delta_max_fall
+                          timing_arc float      A           
+annotated_delay_delta_max_rise
+                          timing_arc float      A           
+annotated_delay_delta_min net        float      A           
+annotated_delay_delta_min timing_arc float      A           
+annotated_delay_delta_min_fall
+                          timing_arc float      A           
+annotated_delay_delta_min_rise
+                          timing_arc float      A           
+annotated_delta_transition
+                          timing_point
+                                     float      A           
+annotated_fall_transition_delta_max
+                          port       float      A           
+annotated_fall_transition_delta_max
+                          pin        float      A           
+annotated_fall_transition_delta_min
+                          port       float      A           
+annotated_fall_transition_delta_min
+                          pin        float      A           
+annotated_rise_transition_delta_max
+                          port       float      A           
+annotated_rise_transition_delta_max
+                          pin        float      A           
+annotated_rise_transition_delta_min
+                          port       float      A           
+annotated_rise_transition_delta_min
+                          pin        float      A           
+annotated_transition_delta_max
+                          port       float      A           
+annotated_transition_delta_max
+                          pin        float      A           
+annotated_transition_delta_max
+                          net        float      A           
+annotated_transition_delta_min
+                          port       float      A           
+annotated_transition_delta_min
+                          pin        float      A           
+annotated_transition_delta_min
+                          net        float      A           
+aocvm_coefficient         timing_point
+                                     float      A           
+applied_derate            timing_point
+                                     float      A           
+area                      design     float      A           
+area                      cell       float      A           
+area                      net        float      A           
+area                      lib_cell   float      A           
+arrival                   timing_path
+                                     float      A           
+arrival                   timing_point
+                                     float      A           
+arrival_window            port       string     A           
+arrival_window            pin        string     A           
+ba_capacitance_max        net        float      A           
+ba_capacitance_min        net        float      A           
+ba_resistance_max         net        float      A           
+ba_resistance_min         net        float      A           
+base_name                 cell       string     A           
+base_name                 net        string     A           
+base_name                 lib_cell   string     A           
+base_name                 lib_pin    string     A           
+bottleneck_cost           cell       float      A           
+cached_c1_max_fall        port       float      A           
+cached_c1_max_fall        pin        float      A           
+cached_c1_max_rise        port       float      A           
+cached_c1_max_rise        pin        float      A           
+cached_c1_min_fall        port       float      A           
+cached_c1_min_fall        pin        float      A           
+cached_c1_min_rise        port       float      A           
+cached_c1_min_rise        pin        float      A           
+cached_c2_max_fall        port       float      A           
+cached_c2_max_fall        pin        float      A           
+cached_c2_max_rise        port       float      A           
+cached_c2_max_rise        pin        float      A           
+cached_c2_min_fall        port       float      A           
+cached_c2_min_fall        pin        float      A           
+cached_c2_min_rise        port       float      A           
+cached_c2_min_rise        pin        float      A           
+cached_ceff_max_fall      port       float      A           
+cached_ceff_max_fall      pin        float      A           
+cached_ceff_max_rise      port       float      A           
+cached_ceff_max_rise      pin        float      A           
+cached_ceff_min_fall      port       float      A           
+cached_ceff_min_fall      pin        float      A           
+cached_ceff_min_rise      port       float      A           
+cached_ceff_min_rise      pin        float      A           
+capacitance_unit_in_farad design     float      A           
+capacitance_unit_in_farad lib        float      A           
+capture_clock_paths       timing_path
+                                     collection A           
+case_value                port       string     A           
+case_value                pin        string     A           
+ceff_params_max           port       string     A           
+ceff_params_max           pin        string     A           
+ceff_params_min           port       string     A           
+ceff_params_min           pin        string     A           
+cell                      pin        collection A           
+children_nodes            category_node
+                                     collection A           
+clock                     lib_pin    boolean    A           
+clock_aggregate_pins      clock      collection A           
+clock_capture_arrival_dynamic
+                          port       string     A           
+clock_capture_arrival_dynamic
+                          pin        string     A           
+clock_capture_arrival_static
+                          port       string     A           
+clock_capture_arrival_static
+                          pin        string     A           
+clock_latency_fall_max    port       float      A           
+clock_latency_fall_max    pin        float      A           
+clock_latency_fall_max    clock      float      A           
+clock_latency_fall_min    port       float      A           
+clock_latency_fall_min    pin        float      A           
+clock_latency_fall_min    clock      float      A           
+clock_latency_rise_max    port       float      A           
+clock_latency_rise_max    pin        float      A           
+clock_latency_rise_max    clock      float      A           
+clock_latency_rise_min    port       float      A           
+clock_latency_rise_min    pin        float      A           
+clock_latency_rise_min    clock      float      A           
+clock_launch_arrival_dynamic
+                          port       string     A           
+clock_launch_arrival_dynamic
+                          pin        string     A           
+clock_launch_arrival_static
+                          port       string     A           
+clock_launch_arrival_static
+                          pin        string     A           
+clock_network_pins        clock      collection A           
+clock_pin_power           cell       double     A           
+clock_source_latency_early_fall_max
+                          port       float      A           
+clock_source_latency_early_fall_max
+                          pin        float      A           
+clock_source_latency_early_fall_max
+                          clock      float      A           
+clock_source_latency_early_fall_min
+                          port       float      A           
+clock_source_latency_early_fall_min
+                          pin        float      A           
+clock_source_latency_early_fall_min
+                          clock      float      A           
+clock_source_latency_early_rise_max
+                          port       float      A           
+clock_source_latency_early_rise_max
+                          pin        float      A           
+clock_source_latency_early_rise_max
+                          clock      float      A           
+clock_source_latency_early_rise_min
+                          port       float      A           
+clock_source_latency_early_rise_min
+                          pin        float      A           
+clock_source_latency_early_rise_min
+                          clock      float      A           
+clock_source_latency_late_fall_max
+                          port       float      A           
+clock_source_latency_late_fall_max
+                          pin        float      A           
+clock_source_latency_late_fall_max
+                          clock      float      A           
+clock_source_latency_late_fall_min
+                          port       float      A           
+clock_source_latency_late_fall_min
+                          pin        float      A           
+clock_source_latency_late_fall_min
+                          clock      float      A           
+clock_source_latency_late_rise_max
+                          port       float      A           
+clock_source_latency_late_rise_max
+                          pin        float      A           
+clock_source_latency_late_rise_max
+                          clock      float      A           
+clock_source_latency_late_rise_min
+                          port       float      A           
+clock_source_latency_late_rise_min
+                          pin        float      A           
+clock_source_latency_late_rise_min
+                          clock      float      A           
+clock_source_latency_pins clock      collection A           
+clock_uncertainty         timing_path
+                                     float      A           
+clocks                    port       collection A           
+clocks                    pin        collection A           
+close_edge_adjustment     timing_path
+                                     float      A           
+common_path_pessimism     timing_path
+                                     float      A           
+config_name               design     string     A           
+config_path               design     string     A           
+connection_class          port       string     A           
+connection_class          lib_pin    string     A           
+constant                  correlation
+                                     int        A           
+constant_value            port       string     A           
+constant_value            pin        string     A           
+constraining_max_transition
+                          port       float      A           
+constraining_max_transition
+                          pin        float      A           
+context_config_name       design     string     A           
+context_config_path       design     string     A           
+context_timestamp         design     string     A           
+control_net               upf_power_switch
+                                     collection A           
+control_port_name         upf_power_switch
+                                     string     A           
+core_obj                  gui_object collection A           
+coupling_capacitors       net        string     A           
+crpr_common_point         timing_path
+                                     collection A           
+current_unit_in_amp       design     float      A           
+current_unit_in_amp       lib        float      A           
+default_connection_class  lib        string     A           
+default_isolation_supply  upf_power_domain
+                                     collection A           
+default_max_capacitance   lib        float      A           
+default_max_fanout        lib        float      A           
+default_max_transition    lib        float      A           
+default_min_capacitance   lib        float      A           
+default_min_fanout        lib        float      A           
+default_min_transition    lib        float      A           
+default_retention_supply  upf_power_domain
+                                     collection A           
+default_threshold_voltage_group
+                          lib        string     U,S         
+delay_max                 timing_arc float      A           
+delay_max_fall            timing_arc float      A           
+delay_max_rise            timing_arc float      A           
+delay_min                 timing_arc float      A           
+delay_min_fall            timing_arc float      A           
+delay_min_rise            timing_arc float      A           
+depth                     timing_point
+                                     float      A           
+depth_cell_capture        timing_path
+                                     float      A           
+depth_cell_launch         timing_path
+                                     float      A           
+depth_net_capture         timing_path
+                                     float      A           
+depth_net_launch          timing_path
+                                     float      A           
+derate_factor_depth_distance
+                          timing_point
+                                     float      A           
+designWare                design     boolean    A           
+direction                 port       string     A           
+direction                 pin        string     A           
+direction                 lib_pin    string     A           
+direction                 upf_supply_port
+                                     string     A           
+disable_timing            port       boolean    A           
+disable_timing            cell       boolean    A           
+disable_timing            pin        boolean    A           
+disable_timing            lib_cell   boolean    A           
+disable_timing            lib_pin    boolean    A           
+distance                  timing_point
+                                     float      A           
+distance_cell             timing_path
+                                     float      A           
+distance_net              timing_path
+                                     float      A           
+domain                    cell       collection A           
+domain                    upf_supply_port
+                                     collection A           
+domain                    upf_power_switch
+                                     collection A           
+domains                   upf_supply_net
+                                     collection A           
+dominant_exception        timing_path
+                                     string     A           
+dont_touch                design     boolean    A           
+dont_touch                cell       boolean    A           
+dont_touch                net        boolean    A           
+dont_touch                lib_cell   boolean    A           
+dont_use                  lib_cell   boolean    A           
+drive_resistance_fall     lib_pin    float      A           
+drive_resistance_fall_max port       float      A           
+drive_resistance_fall_min port       float      A           
+drive_resistance_rise     lib_pin    float      A           
+drive_resistance_rise_max port       float      A           
+drive_resistance_rise_min port       float      A           
+driver_model_scaling_libs_max
+                          port       collection A           
+driver_model_scaling_libs_max
+                          pin        collection A           
+driver_model_scaling_libs_min
+                          port       collection A           
+driver_model_scaling_libs_min
+                          pin        collection A           
+driver_model_type_max_fall
+                          port       string     A           
+driver_model_type_max_fall
+                          pin        string     A           
+driver_model_type_max_rise
+                          port       string     A           
+driver_model_type_max_rise
+                          pin        string     A           
+driver_model_type_min_fall
+                          port       string     A           
+driver_model_type_min_fall
+                          pin        string     A           
+driver_model_type_min_rise
+                          port       string     A           
+driver_model_type_min_rise
+                          pin        string     A           
+driver_waveform_fall      lib_pin    string     A           
+driver_waveform_rise      lib_pin    string     A           
+driving_cell_fall_max     port       string     A           
+driving_cell_fall_min     port       string     A           
+driving_cell_from_pin_fall_max
+                          port       string     A           
+driving_cell_from_pin_fall_min
+                          port       string     A           
+driving_cell_from_pin_rise_max
+                          port       string     A           
+driving_cell_from_pin_rise_min
+                          port       string     A           
+driving_cell_library_fall_max
+                          port       string     A           
+driving_cell_library_fall_min
+                          port       string     A           
+driving_cell_library_rise_max
+                          port       string     A           
+driving_cell_library_rise_min
+                          port       string     A           
+driving_cell_max_fall_itrans_fall
+                          port       float      A           
+driving_cell_max_fall_itrans_rise
+                          port       float      A           
+driving_cell_max_rise_itrans_fall
+                          port       float      A           
+driving_cell_max_rise_itrans_rise
+                          port       float      A           
+driving_cell_min_fall_itrans_fall
+                          port       float      A           
+driving_cell_min_fall_itrans_rise
+                          port       float      A           
+driving_cell_min_rise_itrans_fall
+                          port       float      A           
+driving_cell_min_rise_itrans_rise
+                          port       float      A           
+driving_cell_multiply_by  port       float      A           
+driving_cell_no_design_rule
+                          port       boolean    A           
+driving_cell_pin_fall_max port       string     A           
+driving_cell_pin_fall_min port       string     A           
+driving_cell_pin_rise_max port       string     A           
+driving_cell_pin_rise_min port       string     A           
+driving_cell_rise_max     port       string     A           
+driving_cell_rise_min     port       string     A           
+dynamic_power             design     double     A           
+dynamic_power             cell       double     A           
+early_fall_cell_check_derate_factor
+                          design     float      A           
+early_fall_cell_check_derate_factor
+                          cell       float      A           
+early_fall_clk_cell_derate_factor
+                          design     float      A           
+early_fall_clk_cell_derate_factor
+                          cell       float      A           
+early_fall_clk_net_delta_derate_factor
+                          design     float      A           
+early_fall_clk_net_delta_derate_factor
+                          cell       float      A           
+early_fall_clk_net_delta_derate_factor
+                          net        float      A           
+early_fall_clk_net_derate_factor
+                          design     float      A           
+early_fall_clk_net_derate_factor
+                          cell       float      A           
+early_fall_clk_net_derate_factor
+                          net        float      A           
+early_fall_data_cell_derate_factor
+                          design     float      A           
+early_fall_data_cell_derate_factor
+                          cell       float      A           
+early_fall_data_net_delta_derate_factor
+                          design     float      A           
+early_fall_data_net_delta_derate_factor
+                          cell       float      A           
+early_fall_data_net_delta_derate_factor
+                          net        float      A           
+early_fall_data_net_derate_factor
+                          design     float      A           
+early_fall_data_net_derate_factor
+                          cell       float      A           
+early_fall_data_net_derate_factor
+                          net        float      A           
+early_rise_cell_check_derate_factor
+                          design     float      A           
+early_rise_cell_check_derate_factor
+                          cell       float      A           
+early_rise_clk_cell_derate_factor
+                          design     float      A           
+early_rise_clk_cell_derate_factor
+                          cell       float      A           
+early_rise_clk_net_delta_derate_factor
+                          design     float      A           
+early_rise_clk_net_delta_derate_factor
+                          cell       float      A           
+early_rise_clk_net_delta_derate_factor
+                          net        float      A           
+early_rise_clk_net_derate_factor
+                          design     float      A           
+early_rise_clk_net_derate_factor
+                          cell       float      A           
+early_rise_clk_net_derate_factor
+                          net        float      A           
+early_rise_data_cell_derate_factor
+                          design     float      A           
+early_rise_data_cell_derate_factor
+                          cell       float      A           
+early_rise_data_net_delta_derate_factor
+                          design     float      A           
+early_rise_data_net_delta_derate_factor
+                          cell       float      A           
+early_rise_data_net_delta_derate_factor
+                          net        float      A           
+early_rise_data_net_derate_factor
+                          design     float      A           
+early_rise_data_net_derate_factor
+                          cell       float      A           
+early_rise_data_net_derate_factor
+                          net        float      A           
+effective_aggressors      net        string     A           
+effective_capacitance_max port       float      A           
+effective_capacitance_max pin        float      A           
+effective_capacitance_min port       float      A           
+effective_capacitance_min pin        float      A           
+effective_coupling_capacitors
+                          net        string     A           
+elements                  upf_power_domain
+                                     collection A           
+endpoint                  timing_path
+                                     collection A           
+endpoint_clock            timing_path
+                                     collection A           
+endpoint_clock_close_edge_type
+                          timing_path
+                                     string     A           
+endpoint_clock_close_edge_value
+                          timing_path
+                                     float      A           
+endpoint_clock_is_inverted
+                          timing_path
+                                     boolean    A           
+endpoint_clock_is_propagated
+                          timing_path
+                                     boolean    A           
+endpoint_clock_latency    timing_path
+                                     float      A           
+endpoint_clock_open_edge_type
+                          timing_path
+                                     string     A           
+endpoint_clock_open_edge_value
+                          timing_path
+                                     float      A           
+endpoint_clock_pin        timing_path
+                                     collection A           
+endpoint_hold_time_value  timing_path
+                                     float      A           
+endpoint_is_level_sensitive
+                          timing_path
+                                     boolean    A           
+endpoint_output_delay_value
+                          timing_path
+                                     float      A           
+endpoint_recovery_time_value
+                          timing_path
+                                     float      A           
+endpoint_removal_time_value
+                          timing_path
+                                     float      A           
+endpoint_setup_time_value timing_path
+                                     float      A           
+endpoint_unconstrained_reason
+                          timing_path
+                                     string     A           
+escaped_full_name         port       string     A           
+escaped_full_name         cell       string     A           
+escaped_full_name         pin        string     A           
+escaped_full_name         net        string     A           
+exception_delay           timing_path
+                                     float      A           
+extended_name             design     string     A           
+extended_name             lib        string     A           
+fanout_load               port       float      A           
+fanout_load               pin        float      A           
+fanout_load               lib_pin    float      A           
+from_lib_pin              lib_timing_arc
+                                     collection A           
+from_pin                  timing_arc collection A           
+full_name                 design     string     A           
+full_name                 port       string     A           
+full_name                 cell       string     A           
+full_name                 pin        string     A           
+full_name                 net        string     A           
+full_name                 lib        string     A           
+full_name                 lib_cell   string     A           
+full_name                 lib_pin    string     A           
+full_name                 variation  string     A           
+full_name                 correlation
+                                     string     A           
+full_name                 clock      string     A           
+full_name                 path_group string     A           
+full_name                 upf_power_domain
+                                     string     A           
+full_name                 upf_supply_port
+                                     string     A           
+full_name                 upf_supply_net
+                                     string     A           
+full_name                 upf_power_switch
+                                     string     A           
+full_name                 upf_supply_set
+                                     string     A           
+function_id               lib_cell   string     A           
+gate_leakage_power        design     double     A           
+gate_leakage_power        cell       double     A           
+generated_clocks          clock      collection A           
+glitch_count              net        float      A           
+glitch_power              design     double     A           
+glitch_power              cell       double     A           
+glitch_rate               pin        double     A           
+glitch_rate               net        double     A           
+ground                    upf_supply_set
+                                     collection A           
+guardband                 timing_point
+                                     float      A           
+has_ccs_driver_fall       lib_timing_arc
+                                     boolean    A           
+has_ccs_driver_rise       lib_timing_arc
+                                     boolean    A           
+has_ccs_noise_above_high  lib_pin    boolean    A           
+has_ccs_noise_above_high  lib_timing_arc
+                                     boolean    A           
+has_ccs_noise_above_low   lib_pin    boolean    A           
+has_ccs_noise_above_low   lib_timing_arc
+                                     boolean    A           
+has_ccs_noise_below_high  lib_pin    boolean    A           
+has_ccs_noise_below_high  lib_timing_arc
+                                     boolean    A           
+has_ccs_noise_below_low   lib_pin    boolean    A           
+has_ccs_noise_below_low   lib_timing_arc
+                                     boolean    A           
+has_ccs_receiver_fall     lib_pin    boolean    A           
+has_ccs_receiver_fall     lib_timing_arc
+                                     boolean    A           
+has_ccs_receiver_rise     lib_pin    boolean    A           
+has_ccs_receiver_rise     lib_timing_arc
+                                     boolean    A           
+has_detailed_parasitics   net        boolean    A           
+has_multi_ground_rails    cell       boolean    A           
+has_multi_ground_rails    lib_cell   boolean    A           
+has_multi_power_rails     cell       boolean    A           
+has_multi_power_rails     lib_cell   boolean    A           
+has_rail_specific_power_tables
+                          cell       boolean    A           
+has_rail_specific_power_tables
+                          lib_cell   boolean    A           
+has_sensitization_data    lib        boolean    A           
+has_valid_parasitics      net        boolean    A           
+hold_uncertainty          port       float      A           
+hold_uncertainty          pin        float      A           
+hold_uncertainty          clock      float      A           
+ideal_latency_max_fall    port       float      A           
+ideal_latency_max_fall    pin        float      A           
+ideal_latency_max_rise    port       float      A           
+ideal_latency_max_rise    pin        float      A           
+ideal_latency_min_fall    port       float      A           
+ideal_latency_min_fall    pin        float      A           
+ideal_latency_min_rise    port       float      A           
+ideal_latency_min_rise    pin        float      A           
+ideal_transition_max_fall port       float      A           
+ideal_transition_max_fall pin        float      A           
+ideal_transition_max_rise port       float      A           
+ideal_transition_max_rise pin        float      A           
+ideal_transition_min_fall port       float      A           
+ideal_transition_min_fall pin        float      A           
+ideal_transition_min_rise port       float      A           
+ideal_transition_min_rise pin        float      A           
+incremental               timing_point
+                                     float      A           
+input_supply_net          upf_power_switch
+                                     collection A           
+input_supply_port_name    upf_power_switch
+                                     string     A           
+input_transition_fall_max port       float      A           
+input_transition_fall_min port       float      A           
+input_transition_rise_max port       float      A           
+input_transition_rise_min port       float      A           
+internal_power            design     double     A           
+internal_power            cell       double     A           
+internal_power_derate_factor
+                          design     float      A           
+internal_power_derate_factor
+                          cell       float      A           
+intrinsic_leakage_power   design     double     A           
+intrinsic_leakage_power   cell       double     A           
+is_abstracted             port       boolean    A           
+is_abstracted             pin        boolean    A           
+is_active                 clock      boolean    A           
+is_annotated_fall_max     timing_arc boolean    A           
+is_annotated_fall_min     timing_arc boolean    A           
+is_annotated_rise_max     timing_arc boolean    A           
+is_annotated_rise_min     timing_arc boolean    A           
+is_async_pin              pin        boolean    A           
+is_async_pin              lib_pin    boolean    A           
+is_black_box              cell       boolean    A           
+is_black_box              lib_cell   boolean    A           
+is_cellarc                timing_arc boolean    A           
+is_clear_pin              pin        boolean    A           
+is_clear_pin              lib_pin    boolean    A           
+is_clock_gating_check     cell       boolean    A           
+is_clock_gating_pin       pin        boolean    A           
+is_clock_network          port       boolean    A           
+is_clock_network          pin        boolean    A           
+is_clock_network          net        boolean    A           
+is_clock_network_cell     cell       boolean    A           
+is_clock_pin              pin        boolean    A           
+is_clock_pin              lib_pin    boolean    A           
+is_clock_source           port       boolean    A           
+is_clock_source           pin        boolean    A           
+is_clock_source_network   port       boolean    A           
+is_clock_source_network   pin        boolean    A           
+is_clock_source_network   net        boolean    A           
+is_clock_used_as_clock    port       boolean    A           
+is_clock_used_as_clock    pin        boolean    A           
+is_clock_used_as_data     port       boolean    A           
+is_clock_used_as_data     pin        boolean    A           
+is_combinational          cell       boolean    A           
+is_combinational          lib_cell   boolean    A           
+is_constraint_scaled_max_fall
+                          timing_arc boolean    A           
+is_constraint_scaled_max_rise
+                          timing_arc boolean    A           
+is_constraint_scaled_min_fall
+                          timing_arc boolean    A           
+is_constraint_scaled_min_rise
+                          timing_arc boolean    A           
+is_context_available      design     boolean    A           
+is_context_loaded         design     boolean    A           
+is_current                design     boolean    A           
+is_current                category_tree
+                                     boolean    A           
+is_data_pin               pin        boolean    A           
+is_data_pin               lib_pin    boolean    A           
+is_db_inherited_disabled  timing_arc boolean    A           
+is_design_mismatch        cell       boolean    A           
+is_design_mismatch        pin        boolean    A           
+is_design_mismatch        net        boolean    A           
+is_disabled               timing_arc boolean    A           
+is_disabled               lib_timing_arc
+                                     boolean    A           
+is_driver_scaled_max_fall port       boolean    A           
+is_driver_scaled_max_fall pin        boolean    A           
+is_driver_scaled_max_rise port       boolean    A           
+is_driver_scaled_max_rise pin        boolean    A           
+is_driver_scaled_min_fall port       boolean    A           
+is_driver_scaled_min_fall pin        boolean    A           
+is_driver_scaled_min_rise port       boolean    A           
+is_driver_scaled_min_rise pin        boolean    A           
+is_edited                 design     boolean    A           
+is_edited                 cell       boolean    A           
+is_fall_edge_triggered    cell       boolean    A           
+is_fall_edge_triggered    lib_cell   boolean    A           
+is_fall_edge_triggered_clock_pin
+                          pin        boolean    A           
+is_fall_edge_triggered_clock_pin
+                          lib_pin    boolean    A           
+is_fall_edge_triggered_data_pin
+                          pin        boolean    A           
+is_fall_edge_triggered_data_pin
+                          lib_pin    boolean    A           
+is_gclock_source_network_pin
+                          port       boolean    A           
+is_generated              clock      boolean    A           
+is_hierarchical           cell       boolean    A           
+is_hierarchical           pin        boolean    A           
+is_hyperscale_block       design     boolean    A           
+is_hyperscale_top         design     boolean    A           
+is_ideal                  port       boolean    A           
+is_ideal                  cell       boolean    A           
+is_ideal                  pin        boolean    A           
+is_ideal                  net        boolean    A           
+is_instantiated           lib_cell   boolean    A           
+is_integrated_clock_gating_cell
+                          cell       boolean    A           
+is_integrated_clock_gating_cell
+                          lib_cell   boolean    A           
+is_interface_logic_model  cell       boolean    U,S         
+is_interface_logic_pin    pin        boolean    A           
+is_isolation              lib_cell   boolean    A           
+is_level_shifter          lib_cell   boolean    A           
+is_macro_switch           cell       boolean    A           
+is_macro_switch           lib_cell   boolean    A           
+is_memory_cell            cell       boolean    A           
+is_memory_cell            lib_cell   boolean    U,S         
+is_mux                    cell       boolean    A           
+is_mux                    lib_cell   boolean    A           
+is_mux_select_pin         pin        boolean    A           
+is_mux_select_pin         lib_pin    boolean    A           
+is_negative_level_sensitive
+                          cell       boolean    A           
+is_negative_level_sensitive
+                          lib_cell   boolean    A           
+is_negative_level_sensitive_clock_pin
+                          pin        boolean    A           
+is_negative_level_sensitive_clock_pin
+                          lib_pin    boolean    A           
+is_negative_level_sensitive_data_pin
+                          pin        boolean    A           
+is_negative_level_sensitive_data_pin
+                          lib_pin    boolean    A           
+is_pad                    lib_pin    boolean    A           
+is_pad_cell               cell       boolean    A           
+is_pad_cell               lib_cell   boolean    A           
+is_pll_cell               lib_cell   boolean    A           
+is_pll_feedback_pin       lib_pin    boolean    A           
+is_pll_output_pin         lib_pin    boolean    A           
+is_pll_reference_pin      lib_pin    boolean    A           
+is_port                   pin        boolean    A           
+is_positive_level_sensitive
+                          cell       boolean    A           
+is_positive_level_sensitive
+                          lib_cell   boolean    A           
+is_positive_level_sensitive_clock_pin
+                          pin        boolean    A           
+is_positive_level_sensitive_clock_pin
+                          lib_pin    boolean    A           
+is_positive_level_sensitive_data_pin
+                          pin        boolean    A           
+is_positive_level_sensitive_data_pin
+                          lib_pin    boolean    A           
+is_power_control_signal_net
+                          net        boolean    A           
+is_power_standby_cell     cell       boolean    A           
+is_preset_pin             pin        boolean    A           
+is_preset_pin             lib_pin    boolean    A           
+is_recalculated           timing_path
+                                     boolean    A           
+is_receiver_scaled_max_fall
+                          port       boolean    A           
+is_receiver_scaled_max_fall
+                          pin        boolean    A           
+is_receiver_scaled_max_rise
+                          port       boolean    A           
+is_receiver_scaled_max_rise
+                          pin        boolean    A           
+is_receiver_scaled_min_fall
+                          port       boolean    A           
+is_receiver_scaled_min_fall
+                          pin        boolean    A           
+is_receiver_scaled_min_rise
+                          port       boolean    A           
+is_receiver_scaled_min_rise
+                          pin        boolean    A           
+is_recovered              timing_path
+                                     boolean    A           
+is_retention              lib_cell   boolean    A           
+is_rise_edge_triggered    cell       boolean    A           
+is_rise_edge_triggered    lib_cell   boolean    A           
+is_rise_edge_triggered_clock_pin
+                          pin        boolean    A           
+is_rise_edge_triggered_clock_pin
+                          lib_pin    boolean    A           
+is_rise_edge_triggered_data_pin
+                          pin        boolean    A           
+is_rise_edge_triggered_data_pin
+                          lib_pin    boolean    A           
+is_sequential             cell       boolean    A           
+is_sequential             lib_cell   boolean    A           
+is_three_state            cell       boolean    A           
+is_three_state            pin        boolean    A           
+is_three_state            lib_cell   boolean    A           
+is_three_state            lib_pin    boolean    A           
+is_three_state_enable_pin pin        boolean    A           
+is_three_state_enable_pin lib_pin    boolean    A           
+is_three_state_output_pin pin        boolean    A           
+is_three_state_output_pin lib_pin    boolean    A           
+is_unbuffered             lib_pin    boolean    A           
+is_user_abstracted        port       boolean    A           
+is_user_abstracted        pin        boolean    A           
+is_user_disabled          timing_arc boolean    A           
+is_user_disabled          lib_timing_arc
+                                     boolean    A           
+k_process_cell_fall       lib        float      U,I,S       
+k_process_cell_rise       lib        float      U,I,S       
+k_process_fall_transition lib        float      U,I,S       
+k_process_rise_transition lib        float      U,I,S       
+k_temp_cell_fall          lib        float      U,I,S       
+k_temp_cell_rise          lib        float      U,I,S       
+k_temp_fall_transition    lib        float      U,I,S       
+k_temp_rise_transition    lib        float      U,I,S       
+k_volt_cell_fall          lib        float      U,I,S       
+k_volt_cell_rise          lib        float      U,I,S       
+k_volt_fall_transition    lib        float      U,I,S       
+k_volt_rise_transition    lib        float      U,I,S       
+late_fall_cell_check_derate_factor
+                          design     float      A           
+late_fall_cell_check_derate_factor
+                          cell       float      A           
+late_fall_clk_cell_derate_factor
+                          design     float      A           
+late_fall_clk_cell_derate_factor
+                          cell       float      A           
+late_fall_clk_net_delta_derate_factor
+                          design     float      A           
+late_fall_clk_net_delta_derate_factor
+                          cell       float      A           
+late_fall_clk_net_delta_derate_factor
+                          net        float      A           
+late_fall_clk_net_derate_factor
+                          design     float      A           
+late_fall_clk_net_derate_factor
+                          cell       float      A           
+late_fall_clk_net_derate_factor
+                          net        float      A           
+late_fall_data_cell_derate_factor
+                          design     float      A           
+late_fall_data_cell_derate_factor
+                          cell       float      A           
+late_fall_data_net_delta_derate_factor
+                          design     float      A           
+late_fall_data_net_delta_derate_factor
+                          cell       float      A           
+late_fall_data_net_delta_derate_factor
+                          net        float      A           
+late_fall_data_net_derate_factor
+                          design     float      A           
+late_fall_data_net_derate_factor
+                          cell       float      A           
+late_fall_data_net_derate_factor
+                          net        float      A           
+late_rise_cell_check_derate_factor
+                          design     float      A           
+late_rise_cell_check_derate_factor
+                          cell       float      A           
+late_rise_clk_cell_derate_factor
+                          design     float      A           
+late_rise_clk_cell_derate_factor
+                          cell       float      A           
+late_rise_clk_net_delta_derate_factor
+                          design     float      A           
+late_rise_clk_net_delta_derate_factor
+                          cell       float      A           
+late_rise_clk_net_delta_derate_factor
+                          net        float      A           
+late_rise_clk_net_derate_factor
+                          design     float      A           
+late_rise_clk_net_derate_factor
+                          cell       float      A           
+late_rise_clk_net_derate_factor
+                          net        float      A           
+late_rise_data_cell_derate_factor
+                          design     float      A           
+late_rise_data_cell_derate_factor
+                          cell       float      A           
+late_rise_data_net_delta_derate_factor
+                          design     float      A           
+late_rise_data_net_delta_derate_factor
+                          cell       float      A           
+late_rise_data_net_delta_derate_factor
+                          net        float      A           
+late_rise_data_net_derate_factor
+                          design     float      A           
+late_rise_data_net_derate_factor
+                          cell       float      A           
+late_rise_data_net_derate_factor
+                          net        float      A           
+launch_clock_paths        timing_path
+                                     collection A           
+launch_clocks             port       collection A           
+launch_clocks             pin        collection A           
+leaf_drivers              net        collection A           
+leaf_loads                net        collection A           
+leakage_power             design     double     A           
+leakage_power             cell       double     A           
+leakage_power_derate_factor
+                          design     float      A           
+leakage_power_derate_factor
+                          cell       float      A           
+lib_cell                  cell       collection A           
+lib_pg_pin_info           lib_cell   collection A           
+lib_pin                   pin        collection A           
+lib_pin_name              pin        string     A           
+lib_scaling_group         lib        collection A           
+load_of_pin_capacitance   lib_pin    float      A           
+master_clock              clock      collection A           
+master_pin                clock      collection A           
+max_area                  design     float      A           
+max_capacitance           design     float      A           
+max_capacitance           port       float      A           
+max_capacitance           pin        float      A           
+max_capacitance           lib_pin    float      A           
+max_capacitance_clock_path_fall
+                          clock      float      A           
+max_capacitance_clock_path_rise
+                          clock      float      A           
+max_capacitance_data_path_fall
+                          clock      float      A           
+max_capacitance_data_path_rise
+                          clock      float      A           
+max_fall_arrival          pin        float      A           
+max_fall_delay            port       float      A           
+max_fall_delay            pin        float      A           
+max_fall_delay            clock      float      A           
+max_fall_local_slack      port       float      A           
+max_fall_local_slack      pin        float      A           
+max_fall_slack            port       float      A           
+max_fall_slack            pin        float      A           
+max_fanout                design     float      A           
+max_fanout                port       float      A           
+max_fanout                pin        float      A           
+max_fanout                lib_pin    float      A           
+max_rise_arrival          pin        float      A           
+max_rise_delay            port       float      A           
+max_rise_delay            pin        float      A           
+max_rise_delay            clock      float      A           
+max_rise_local_slack      port       float      A           
+max_rise_local_slack      pin        float      A           
+max_rise_slack            port       float      A           
+max_rise_slack            pin        float      A           
+max_slack                 port       float      A           
+max_slack                 pin        float      A           
+max_slack                 net        float      A           
+max_time_borrow           pin        float      A           
+max_time_borrow           clock      float      A           
+max_transition            design     float      A           
+max_transition            port       float      A           
+max_transition            pin        float      A           
+max_transition            lib_pin    float      A           
+max_transition_clock_path_fall
+                          clock      float      A           
+max_transition_clock_path_rise
+                          clock      float      A           
+max_transition_data_path_fall
+                          clock      float      A           
+max_transition_data_path_rise
+                          clock      float      A           
+mean                      variation  float      A           
+min_capacitance           design     float      A           
+min_capacitance           port       float      A           
+min_capacitance           pin        float      A           
+min_capacitance           lib_pin    float      A           
+min_extended_name         lib        string     A           
+min_fall_arrival          pin        float      A           
+min_fall_delay            port       float      A           
+min_fall_delay            pin        float      A           
+min_fall_delay            clock      float      A           
+min_fall_slack            port       float      A           
+min_fall_slack            pin        float      A           
+min_fanout                design     float      A           
+min_fanout                port       float      A           
+min_fanout                pin        float      A           
+min_fanout                lib_pin    float      A           
+min_rise_arrival          pin        float      A           
+min_rise_delay            port       float      A           
+min_rise_delay            pin        float      A           
+min_rise_delay            clock      float      A           
+min_rise_slack            port       float      A           
+min_rise_slack            pin        float      A           
+min_slack                 port       float      A           
+min_slack                 pin        float      A           
+min_slack                 net        float      A           
+min_source_file_name      lib        string     A           
+min_transition            design     float      A           
+min_transition            port       float      A           
+min_transition            pin        float      A           
+min_transition            lib_pin    float      A           
+mode                      timing_arc string     A           
+mode                      lib_timing_arc
+                                     string     A           
+mog_func_id               lib_cell   string     A           
+name                      upf_power_domain
+                                     string     A           
+name                      upf_supply_port
+                                     string     A           
+name                      upf_supply_net
+                                     string     A           
+name                      upf_power_switch
+                                     string     A           
+name                      upf_supply_set
+                                     string     A           
+name                      category_tree
+                                     string     A           
+name                      category_node
+                                     string     A           
+name                      gui_object string     A           
+name                      mode       string     A           
+name                      corner     string     A           
+name                      scenario   string     A           
+net                       port       collection A           
+net                       pin        collection A           
+net_resistance_max        net        float      A           
+net_resistance_min        net        float      A           
+normalized_slack          timing_path
+                                     float      A           
+normalized_slack_no_close_edge_adjustment
+                          timing_path
+                                     float      A           
+number_of_aggressors      net        int        A           
+number_of_coupling_capacitors
+                          net        int        A           
+number_of_effective_aggressors
+                          net        int        A           
+number_of_effective_coupling_capacitors
+                          net        int        A           
+number_of_leaf_drivers    net        int        A           
+number_of_leaf_loads      net        int        A           
+number_of_pins            cell       int        A           
+number_of_pins            lib_cell   int        A           
+object                    timing_point
+                                     collection A           
+object_class              design     string     A           
+object_class              port       string     A           
+object_class              cell       string     A           
+object_class              pin        string     A           
+object_class              net        string     A           
+object_class              lib        string     A           
+object_class              lib_cell   string     A           
+object_class              lib_pin    string     A           
+object_class              timing_path
+                                     string     A           
+object_class              timing_point
+                                     string     A           
+object_class              variation  string     A           
+object_class              correlation
+                                     string     A           
+object_class              clock      string     A           
+object_class              path_group string     A           
+object_class              timing_arc string     A           
+object_class              lib_timing_arc
+                                     string     A           
+object_class              category_tree
+                                     string     A           
+object_class              category_node
+                                     string     A           
+objects                   category_node
+                                     collection A           
+on_state                  upf_power_switch
+                                     string     A           
+operating_condition_max   design     string     A           
+operating_condition_min   design     string     A           
+original_pin              lib_pin    string     U,I,S       
+original_ref_name         cell       string     A           
+output_supply_net         upf_power_switch
+                                     collection A           
+output_supply_port_name   upf_power_switch
+                                     string     A           
+para_corner_name          corner     string     A           
+parameter_name            variation  string     A           
+path_group                timing_path
+                                     collection A           
+path_type                 timing_path
+                                     string     A           
+peak_power                design     double     A           
+peak_power                cell       double     A           
+peak_power_end_time       design     double     A           
+peak_power_end_time       cell       double     A           
+peak_power_start_time     design     double     A           
+peak_power_start_time     cell       double     A           
+period                    clock      float      A           
+pg_pin_info               port       collection A           
+pg_pin_info               cell       collection A           
+pin_capacitance           lib_pin    float      A           
+pin_capacitance_max       port       float      A           
+pin_capacitance_max       pin        float      A           
+pin_capacitance_max       net        float      A           
+pin_capacitance_max_fall  port       float      A           
+pin_capacitance_max_fall  pin        float      A           
+pin_capacitance_max_fall  net        float      A           
+pin_capacitance_max_fall  lib_pin    float      A           
+pin_capacitance_max_rise  port       float      A           
+pin_capacitance_max_rise  pin        float      A           
+pin_capacitance_max_rise  net        float      A           
+pin_capacitance_max_rise  lib_pin    float      A           
+pin_capacitance_min       port       float      A           
+pin_capacitance_min       pin        float      A           
+pin_capacitance_min       net        float      A           
+pin_capacitance_min_fall  port       float      A           
+pin_capacitance_min_fall  pin        float      A           
+pin_capacitance_min_fall  net        float      A           
+pin_capacitance_min_fall  lib_pin    float      A           
+pin_capacitance_min_rise  port       float      A           
+pin_capacitance_min_rise  pin        float      A           
+pin_capacitance_min_rise  net        float      A           
+pin_capacitance_min_rise  lib_pin    float      A           
+pin_direction             pin        string     A           
+pin_direction             lib_pin    string     A           
+pin_name                  pg_pin_info
+                                     string     A           
+pin_name                  lib_pg_pin_info
+                                     string     A           
+points                    timing_path
+                                     collection A           
+port_direction            port       string     A           
+power                     upf_supply_set
+                                     collection A           
+power_base_clock          port       string     A           
+power_base_clock          pin        string     A           
+power_base_clock          net        string     A           
+power_cell_type           cell       string     U,S         
+power_cell_type           lib_cell   string     U,S         
+power_rail_voltage_bidir_input_max
+                          pin        float      A           
+power_rail_voltage_bidir_input_min
+                          pin        float      A           
+power_rail_voltage_max    port       float      A           
+power_rail_voltage_max    pin        float      A           
+power_rail_voltage_min    port       float      A           
+power_rail_voltage_min    pin        float      A           
+power_simulation_time     design     float      A           
+power_states              design     double     A           
+power_states              cell       double     A           
+primary_supply            upf_power_domain
+                                     collection A           
+process_max               design     float      A           
+process_min               design     float      A           
+propagated_clock          port       boolean    A           
+propagated_clock          pin        boolean    A           
+propagated_clock          clock      boolean    A           
+query_text                gui_object string     A           
+rc_annotated_segment      net        boolean    A           
+rc_input_threshold_pct_fall
+                          design     float      A           
+rc_input_threshold_pct_fall
+                          lib_pin    float      A           
+rc_input_threshold_pct_fall_max
+                          pin        float      A           
+rc_input_threshold_pct_fall_min
+                          pin        float      A           
+rc_input_threshold_pct_rise
+                          design     float      A           
+rc_input_threshold_pct_rise
+                          lib_pin    float      A           
+rc_input_threshold_pct_rise_max
+                          pin        float      A           
+rc_input_threshold_pct_rise_min
+                          pin        float      A           
+rc_network                net        string     A           
+rc_network_with_sensitivity
+                          net        string     A           
+rc_output_threshold_pct_fall
+                          design     float      A           
+rc_output_threshold_pct_fall
+                          lib_pin    float      A           
+rc_output_threshold_pct_fall_max
+                          pin        float      A           
+rc_output_threshold_pct_fall_min
+                          pin        float      A           
+rc_output_threshold_pct_rise
+                          design     float      A           
+rc_output_threshold_pct_rise
+                          lib_pin    float      A           
+rc_output_threshold_pct_rise_max
+                          pin        float      A           
+rc_output_threshold_pct_rise_min
+                          pin        float      A           
+rc_slew_derate_from_library
+                          design     float      A           
+rc_slew_derate_from_library
+                          lib_pin    float      A           
+rc_slew_derate_from_library_max
+                          pin        float      A           
+rc_slew_derate_from_library_min
+                          pin        float      A           
+rc_slew_lower_threshold_pct_fall
+                          design     float      A           
+rc_slew_lower_threshold_pct_fall
+                          lib_pin    float      A           
+rc_slew_lower_threshold_pct_fall_max
+                          pin        float      A           
+rc_slew_lower_threshold_pct_fall_min
+                          pin        float      A           
+rc_slew_lower_threshold_pct_rise
+                          design     float      A           
+rc_slew_lower_threshold_pct_rise
+                          lib_pin    float      A           
+rc_slew_lower_threshold_pct_rise_max
+                          pin        float      A           
+rc_slew_lower_threshold_pct_rise_min
+                          pin        float      A           
+rc_slew_upper_threshold_pct_fall
+                          design     float      A           
+rc_slew_upper_threshold_pct_fall
+                          lib_pin    float      A           
+rc_slew_upper_threshold_pct_fall_max
+                          pin        float      A           
+rc_slew_upper_threshold_pct_fall_min
+                          pin        float      A           
+rc_slew_upper_threshold_pct_rise
+                          design     float      A           
+rc_slew_upper_threshold_pct_rise
+                          lib_pin    float      A           
+rc_slew_upper_threshold_pct_rise_max
+                          pin        float      A           
+rc_slew_upper_threshold_pct_rise_min
+                          pin        float      A           
+receiver_model_scaling_libs_max
+                          port       collection A           
+receiver_model_scaling_libs_max
+                          pin        collection A           
+receiver_model_scaling_libs_min
+                          port       collection A           
+receiver_model_scaling_libs_min
+                          pin        collection A           
+receiver_model_type_max_fall
+                          port       string     A           
+receiver_model_type_max_fall
+                          pin        string     A           
+receiver_model_type_max_rise
+                          port       string     A           
+receiver_model_type_max_rise
+                          pin        string     A           
+receiver_model_type_min_fall
+                          port       string     A           
+receiver_model_type_min_fall
+                          pin        string     A           
+receiver_model_type_min_rise
+                          port       string     A           
+receiver_model_type_min_rise
+                          pin        string     A           
+ref_name                  cell       string     A           
+required                  timing_path
+                                     float      A           
+resistance_unit_in_ohm    design     float      A           
+resistance_unit_in_ohm    lib        float      A           
+resolve                   upf_supply_net
+                                     string     A           
+rise_fall                 timing_point
+                                     string     A           
+root_node                 category_tree
+                                     collection A           
+scope                     upf_power_domain
+                                     string     A           
+scope                     upf_supply_port
+                                     string     A           
+sdf_cond                  timing_arc string     A           
+sdf_cond                  lib_timing_arc
+                                     string     A           
+sdf_cond_end              timing_arc string     A           
+sdf_cond_start            timing_arc string     A           
+sense                     timing_arc string     A           
+sense                     lib_timing_arc
+                                     string     A           
+sensitivity               timing_path
+                                     float      A           
+session_name              timing_path
+                                     string     A           
+setup_uncertainty         port       float      A           
+setup_uncertainty         pin        float      A           
+setup_uncertainty         clock      float      A           
+si_double_switching_slack net        float      A           
+si_has_double_switching   net        boolean    A           
+si_has_immunity_above_high
+                          lib_pin    boolean    A           
+si_has_immunity_above_high
+                          lib_timing_arc
+                                     boolean    A           
+si_has_immunity_above_low lib_pin    boolean    A           
+si_has_immunity_above_low lib_timing_arc
+                                     boolean    A           
+si_has_immunity_below_high
+                          lib_pin    boolean    A           
+si_has_immunity_below_high
+                          lib_timing_arc
+                                     boolean    A           
+si_has_immunity_below_low lib_pin    boolean    A           
+si_has_immunity_below_low lib_timing_arc
+                                     boolean    A           
+si_has_iv_above_high      lib_timing_arc
+                                     boolean    A           
+si_has_iv_above_low       lib_timing_arc
+                                     boolean    A           
+si_has_iv_below_high      lib_timing_arc
+                                     boolean    A           
+si_has_iv_below_low       lib_timing_arc
+                                     boolean    A           
+si_has_propagation_above_high
+                          lib_timing_arc
+                                     boolean    A           
+si_has_propagation_above_low
+                          lib_timing_arc
+                                     boolean    A           
+si_has_propagation_below_high
+                          lib_timing_arc
+                                     boolean    A           
+si_has_propagation_below_low
+                          lib_timing_arc
+                                     boolean    A           
+si_has_resistance_above_high
+                          lib_timing_arc
+                                     boolean    A           
+si_has_resistance_above_low
+                          lib_timing_arc
+                                     boolean    A           
+si_has_resistance_below_high
+                          lib_timing_arc
+                                     boolean    A           
+si_has_resistance_below_low
+                          lib_timing_arc
+                                     boolean    A           
+si_noise_active_aggressors_above_high
+                          port       collection A           
+si_noise_active_aggressors_above_high
+                          pin        collection A           
+si_noise_active_aggressors_above_low
+                          port       collection A           
+si_noise_active_aggressors_above_low
+                          pin        collection A           
+si_noise_active_aggressors_below_high
+                          port       collection A           
+si_noise_active_aggressors_below_high
+                          pin        collection A           
+si_noise_active_aggressors_below_low
+                          port       collection A           
+si_noise_active_aggressors_below_low
+                          pin        collection A           
+si_noise_bumps_above_high port       string     A           
+si_noise_bumps_above_high pin        string     A           
+si_noise_bumps_above_low  port       string     A           
+si_noise_bumps_above_low  pin        string     A           
+si_noise_bumps_below_high port       string     A           
+si_noise_bumps_below_high pin        string     A           
+si_noise_bumps_below_low  port       string     A           
+si_noise_bumps_below_low  pin        string     A           
+si_noise_height_factor_above_high
+                          port       float      A           
+si_noise_height_factor_above_high
+                          pin        float      A           
+si_noise_height_factor_above_low
+                          port       float      A           
+si_noise_height_factor_above_low
+                          pin        float      A           
+si_noise_height_factor_below_high
+                          port       float      A           
+si_noise_height_factor_below_high
+                          pin        float      A           
+si_noise_height_factor_below_low
+                          port       float      A           
+si_noise_height_factor_below_low
+                          pin        float      A           
+si_noise_height_offset_above_high
+                          port       float      A           
+si_noise_height_offset_above_high
+                          pin        float      A           
+si_noise_height_offset_above_low
+                          port       float      A           
+si_noise_height_offset_above_low
+                          pin        float      A           
+si_noise_height_offset_below_high
+                          port       float      A           
+si_noise_height_offset_below_high
+                          pin        float      A           
+si_noise_height_offset_below_low
+                          port       float      A           
+si_noise_height_offset_below_low
+                          pin        float      A           
+si_noise_lib_pin_name     pin        string     A           
+si_noise_prop_bumps_above_high
+                          port       string     A           
+si_noise_prop_bumps_above_high
+                          pin        string     A           
+si_noise_prop_bumps_above_low
+                          port       string     A           
+si_noise_prop_bumps_above_low
+                          pin        string     A           
+si_noise_prop_bumps_below_high
+                          port       string     A           
+si_noise_prop_bumps_below_high
+                          pin        string     A           
+si_noise_prop_bumps_below_low
+                          port       string     A           
+si_noise_prop_bumps_below_low
+                          pin        string     A           
+si_noise_slack_above_high port       float      A           
+si_noise_slack_above_high pin        float      A           
+si_noise_slack_above_low  port       float      A           
+si_noise_slack_above_low  pin        float      A           
+si_noise_slack_below_high port       float      A           
+si_noise_slack_below_high pin        float      A           
+si_noise_slack_below_low  port       float      A           
+si_noise_slack_below_low  pin        float      A           
+si_noise_total_bump_above_high
+                          port       string     A           
+si_noise_total_bump_above_high
+                          pin        string     A           
+si_noise_total_bump_above_low
+                          port       string     A           
+si_noise_total_bump_above_low
+                          pin        string     A           
+si_noise_total_bump_below_high
+                          port       string     A           
+si_noise_total_bump_below_high
+                          pin        string     A           
+si_noise_total_bump_below_low
+                          port       string     A           
+si_noise_total_bump_below_low
+                          pin        string     A           
+si_noise_width_factor_above_high
+                          port       float      A           
+si_noise_width_factor_above_high
+                          pin        float      A           
+si_noise_width_factor_above_low
+                          port       float      A           
+si_noise_width_factor_above_low
+                          pin        float      A           
+si_noise_width_factor_below_high
+                          port       float      A           
+si_noise_width_factor_below_high
+                          pin        float      A           
+si_noise_width_factor_below_low
+                          port       float      A           
+si_noise_width_factor_below_low
+                          pin        float      A           
+si_noise_worst_prop_arc_above_high
+                          port       collection A           
+si_noise_worst_prop_arc_above_high
+                          pin        collection A           
+si_noise_worst_prop_arc_above_low
+                          port       collection A           
+si_noise_worst_prop_arc_above_low
+                          pin        collection A           
+si_noise_worst_prop_arc_below_high
+                          port       collection A           
+si_noise_worst_prop_arc_below_high
+                          pin        collection A           
+si_noise_worst_prop_arc_below_low
+                          port       collection A           
+si_noise_worst_prop_arc_below_low
+                          pin        collection A           
+si_xtalk_bumps            net        string     A           
+si_xtalk_bumps            timing_point
+                                     string     A           
+si_xtalk_bumps_max_fall   net        string     A           
+si_xtalk_bumps_max_rise   net        string     A           
+si_xtalk_bumps_min_fall   net        string     A           
+si_xtalk_bumps_min_rise   net        string     A           
+si_xtalk_composite_aggr_max_fall
+                          net        collection A           
+si_xtalk_composite_aggr_max_rise
+                          net        collection A           
+si_xtalk_composite_aggr_min_fall
+                          net        collection A           
+si_xtalk_composite_aggr_min_rise
+                          net        collection A           
+si_xtalk_used_ccs_max_fall
+                          net        boolean    A           
+si_xtalk_used_ccs_max_rise
+                          net        boolean    A           
+si_xtalk_used_ccs_min_fall
+                          net        boolean    A           
+si_xtalk_used_ccs_min_rise
+                          net        boolean    A           
+signature                 gui_object int        A           
+skewness                  variation  float      A           
+slack                     timing_path
+                                     float      A           
+slack                     timing_point
+                                     float      A           
+slack_no_close_edge_adjustment
+                          timing_path
+                                     float      A           
+source_file_name          design     string     A           
+source_file_name          lib        string     A           
+sources                   clock      collection A           
+startpoint                timing_path
+                                     collection A           
+startpoint_clock          timing_path
+                                     collection A           
+startpoint_clock_is_inverted
+                          timing_path
+                                     boolean    A           
+startpoint_clock_is_propagated
+                          timing_path
+                                     boolean    A           
+startpoint_clock_latency  timing_path
+                                     float      A           
+startpoint_clock_open_edge_type
+                          timing_path
+                                     string     A           
+startpoint_clock_open_edge_value
+                          timing_path
+                                     float      A           
+startpoint_input_delay_value
+                          timing_path
+                                     float      A           
+startpoint_is_level_sensitive
+                          timing_path
+                                     boolean    A           
+startpoint_unconstrained_reason
+                          timing_path
+                                     string     A           
+static_prob               upf_supply_net
+                                     float      A           
+static_probability        pin        float      A           
+static_probability        net        float      A           
+std_dev                   variation  float      A           
+summary                   variation  string     A           
+supplies                  upf_power_domain
+                                     string     A           
+supply_connection         pg_pin_info
+                                     string     A           
+switching_power           design     double     A           
+switching_power           cell       double     A           
+switching_power           net        double     A           
+switching_power_derate_factor
+                          design     float      A           
+switching_power_derate_factor
+                          cell       float      A           
+temperature_max           design     float      A           
+temperature_max           port       float      A           
+temperature_max           cell       float      A           
+temperature_max           pin        float      A           
+temperature_min           design     float      A           
+temperature_min           port       float      A           
+temperature_min           cell       float      A           
+temperature_min           pin        float      A           
+threshold_voltage_group   lib_cell   string     U,S         
+time_borrowed_from_endpoint
+                          timing_path
+                                     float      A           
+time_lent_to_startpoint   timing_path
+                                     float      A           
+time_unit_in_second       design     float      A           
+time_unit_in_second       lib        float      A           
+timestamp                 design     string     A           
+timing_model_type         cell       string     A           
+timing_model_type         lib_cell   string     A           
+to_lib_pin                lib_timing_arc
+                                     collection A           
+to_pin                    timing_arc collection A           
+toggle_count              net        float      A           
+toggle_rate               pin        double     A           
+toggle_rate               net        double     A           
+total_capacitance_max     net        float      A           
+total_capacitance_min     net        float      A           
+total_ccs_capacitance_max_fall
+                          net        float      A           
+total_ccs_capacitance_max_rise
+                          net        float      A           
+total_ccs_capacitance_min_fall
+                          net        float      A           
+total_ccs_capacitance_min_rise
+                          net        float      A           
+total_coupling_capacitance
+                          net        float      A           
+total_effective_coupling_capacitance
+                          net        float      A           
+total_power               design     double     A           
+total_power               cell       double     A           
+transition                timing_point
+                                     float      A           
+transparent_latch_paths   timing_path
+                                     collection A           
+tree_type_max             design     string     A           
+tree_type_min             design     string     A           
+type                      pg_pin_info
+                                     string     A           
+type                      lib_pg_pin_info
+                                     string     A           
+type                      gui_object string     A           
+upf_isolation_strategy    cell       string     A           
+upf_retention_strategy    cell       string     A           
+user_case_value           port       string     A           
+user_case_value           pin        string     A           
+user_function_class       lib_cell   string     U,I,S       
+user_global_coupling_separated
+                          net        boolean    A           
+user_pairwise_coupling_separated
+                          net        collection A           
+variance                  variation  float      A           
+variation_arrival         timing_path
+                                     collection A           
+variation_arrival         timing_point
+                                     collection A           
+variation_common_path_pessimism
+                          timing_path
+                                     collection A           
+variation_endpoint_clock_latency
+                          timing_path
+                                     collection A           
+variation_endpoint_hold_time_value
+                          timing_path
+                                     collection A           
+variation_endpoint_recovery_time_value
+                          timing_path
+                                     collection A           
+variation_endpoint_removal_time_value
+                          timing_path
+                                     collection A           
+variation_endpoint_setup_time_value
+                          timing_path
+                                     collection A           
+variation_required        timing_path
+                                     collection A           
+variation_slack           timing_path
+                                     collection A           
+variation_slack           timing_point
+                                     collection A           
+variation_startpoint_clock_latency
+                          timing_path
+                                     collection A           
+variation_transition      timing_point
+                                     collection A           
+violating_endpoints_max   design     collection A           
+violating_endpoints_min   design     collection A           
+voltage                   timing_point
+                                     float      A           
+voltage                   lib_pg_pin_info
+                                     float      A           
+voltage_for_max_delay     pg_pin_info
+                                     float      A           
+voltage_for_min_delay     pg_pin_info
+                                     float      A           
+voltage_max               design     float      A           
+voltage_max               upf_supply_net
+                                     float      A           
+voltage_min               design     float      A           
+voltage_min               upf_supply_net
+                                     float      A           
+voltage_unit_in_volt      design     float      A           
+voltage_unit_in_volt      lib        float      A           
+waveform                  clock      string     A           
+weight                    path_group float      A           
+when                      timing_arc string     A           
+when                      lib_timing_arc
+                                     string     A           
+wire_capacitance_max      port       float      A           
+wire_capacitance_max      net        float      A           
+wire_capacitance_max_fall port       float      A           
+wire_capacitance_max_rise port       float      A           
+wire_capacitance_min      port       float      A           
+wire_capacitance_min      net        float      A           
+wire_capacitance_min_fall port       float      A           
+wire_capacitance_min_rise port       float      A           
+wire_load_min_block_size  design     float      A           
+wire_load_mode            design     string     A           
+wire_load_model_max       design     string     A           
+wire_load_model_max       port       string     A           
+wire_load_model_max       cell       string     A           
+wire_load_model_min       design     string     A           
+wire_load_model_min       port       string     A           
+wire_load_model_min       cell       string     A           
+wire_load_selection_group_max
+                          design     string     A           
+wire_load_selection_group_max
+                          cell       string     A           
+wire_load_selection_group_min
+                          design     string     A           
+wire_load_selection_group_min
+                          cell       string     A           
+x_coordinate              port       float      A           
+x_coordinate              pin        float      A           
+x_coordinate_max          design     float      A           
+x_coordinate_max          cell       float      A           
+x_coordinate_max          net        float      A           
+x_coordinate_min          design     float      A           
+x_coordinate_min          cell       float      A           
+x_coordinate_min          net        float      A           
+x_transition_power        design     double     A           
+x_transition_power        cell       double     A           
+y_coordinate              port       float      A           
+y_coordinate              pin        float      A           
+y_coordinate_max          design     float      A           
+y_coordinate_max          cell       float      A           
+y_coordinate_max          net        float      A           
+y_coordinate_min          design     float      A           
+y_coordinate_min          cell       float      A           
+y_coordinate_min          net        float      A           

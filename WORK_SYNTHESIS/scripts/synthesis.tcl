@@ -45,7 +45,7 @@ suppress_message RTDC-126
 
 # DEFINE CIRCUITS and WORK DIRS
 # set blockName "aes_cipher_top"
-set blockName "c1908"
+set blockName "c5315"
 set active_design $blockName
 
 # DEFINE WORK DIRS
@@ -104,7 +104,7 @@ compile_ultra
 ## SAVE DESIGN
 ######################################################################
 
-write -format verilog -hierarchy -output "${dirname}/${blockName}_postsyn.v"
+write -format verilog -hierarchy -output "${dirname}/${blockName}_postsyn.v" 
 write_sdc -version 1.3 "${dirname}/${blockName}_postsyn.sdc"
 report_threshold_voltage_group
 #report_threshold_voltage_group > ${dirname}/${blockName}_report_vth.rpt
