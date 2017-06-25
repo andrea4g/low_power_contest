@@ -147,7 +147,7 @@ proc dualVth {args} {
             set cell_temp [lindex $cell_list $pointer]
             set temp      [lindex $type_cell_list $pointer ]
             set type_temp [string replace $temp 5 6 LL]
-            ize_cell $cell_temp CORE65LPLVT_nom_1.20V_25C.db:CORE65LPLVT/$type_temp > /dev/null
+            size_cell $cell_temp CORE65LPLVT_nom_1.20V_25C.db:CORE65LPLVT/$type_temp > /dev/null
           }
 
           update_timing
