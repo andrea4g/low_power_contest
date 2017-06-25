@@ -1,3 +1,4 @@
+#ignore WORK_SYNTHESIS files
 /WORK_SYNTHESIS/alib-52
 /WORK_SYNTHESIS/rtl
 /WORK_SYNTHESIS/saved
@@ -6,3 +7,11 @@
 /WORK_SYNTHESIS/command.log
 /WORK_SYNTHESIS/default.svf
 /WORK_SYNTHESIS/pt_shell_command.log
+
+#ignore all files of latex compilation in Atom
+/pdf/group23_dualVth.aux
+/pdf/group23_dualVth.fdb_latexmk
+/pdf/group23_dualVth.fls
+/pdf/group23_dualVth.log
+/pdf/group23_dualVth.synctex.gz
+/pdf/group23_dualVth.xdv
