@@ -8,8 +8,6 @@
 /WORK_SYNTHESIS/default.svf
 /WORK_SYNTHESIS/pt_shell_command.log
 
-!*.csv
-
 #ignore all files of latex compilation in Atom
 /pdf/group23_dualVth.aux
 /pdf/group23_dualVth.fdb_latexmk
@@ -17,3 +15,5 @@
 /pdf/group23_dualVth.log
 /pdf/group23_dualVth.synctex.gz
 /pdf/group23_dualVth.xdv
+
+*.swp
