@@ -10,9 +10,6 @@
 \usepackage{tabularx}
 \usepackage{fancyhdr}
 
-%listato style
-\input{formatting/style.sty}
-
 \setcounter{secnumdepth}{0}
 
 \pagestyle{fancy}
@@ -32,7 +29,7 @@
 
 %-------------------------------------------------------------------------------
 \section{Goal} \label{sec:goal}
-The main goal was to provide a tcl script for Synopsys pt_shell in order to
+The main goal was to provide a tcl script for Synopsys pt\_shell in order to
 change the cells exploiting the Dual Vth tecnique.
 %-------------------------------------------------------------------------------
 \section{Method} \label{sec:method}
@@ -51,14 +48,14 @@ a "cycles" factor, that has been calculated in a way that is explained in the
 next paragraph and represents the maximum number of swapping cycles.
 
 The swapping loop can finish in two ways:
-\itemize {
+\begin{itemize}
   \item if there is the soft constraint, it analyzes the slack and, when it detects the
 change of the slack from positive to negative, it reverts the cells with HIGHER
 o SMALLER slack in the ones just swapped in order to get as close possible with
 the required leakage/time tradeoff.
   \item if there is the hard constraint, it loops until the maximum allowed number of
 cells has been swapped.
-}
+\end{itemize}
 %-------------------------------------------------------------------------------
 \section{Characterization of the number of cycles} \label{sec:characterization}
 The division of the algorithm in different iterations has been seen as a way to
@@ -76,9 +73,27 @@ Doing so, the resulting data has been analyzed and elaborated with a Matlab
 script that is attached in the end of the document.
 
 From this elaboration the effort (number of cycles) decided has been:
-\itemize{
+\begin{itemize}
   \item hard: 5 cycles
   \item soft: 15 cycles, since it can stop before the end and it means the
     algorithm can try with more effort the cells' swaps.
+\end{itemize}
 
+In the next figures it is present the characterization of the soft and hard algorithm.
+The red line is the time normalized, the blue is leakage and the yellow is the mean of them.
+To estimate the best effort for the screen these graphs has been used.
+
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[width=.5\textwidth]{soft.png}
+	\caption{Soft characterization}
+	\label{fig:soft}
+\end{figure}
+
+\begin{figure}[hbt!]
+	\centering
+	\includegraphics[width=.5\textwidth]{Hard.png}
+	\caption{Hard characterization}
+	\label{fig:soft}
+\end{figure}
 \end{document}
