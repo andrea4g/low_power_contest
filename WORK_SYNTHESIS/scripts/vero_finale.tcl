@@ -39,6 +39,9 @@ proc set_HVT_LVT {} {
 read_verilog $in_verilog_filename
 read_sdc -version 1.3 $in_sdc_filename
 
+# Redirect output
+set output /dev/null
+
 ##############################################################
 # ANALYSIS
 ##############################################################
