@@ -53,8 +53,8 @@ next paragraph and represents the maximum number of swapping cycles.
 The swapping loop can finish in two ways:
 \itemize {
   \item if there is the soft constraint, it analyzes the slack and, when it detects the
-change of the slack from positive to negative, it reverts the cells with HIGHER
-o SMALLER slack in the ones just swapped in order to get as close possible with
+change of the slack from positive to negative, it reverts the cells with negative
+slack in the ones just swapped in order to get as close possible with
 the required leakage/time tradeoff.
   \item if there is the hard constraint, it loops until the maximum allowed number of
 cells has been swapped.
