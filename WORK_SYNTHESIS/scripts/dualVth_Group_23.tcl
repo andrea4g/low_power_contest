@@ -29,12 +29,6 @@ set dir "./saved/${blockName}/synthesis"
 set in_verilog_filename "${dir}/${blockName}_postsyn.v"
 set in_sdc_filename "${dir}/${blockName}_postsyn.sdc"
 
-# DEFINE LVT/HVT cells
-proc set_HVT_LVT {} {
-   set_user_attribute [find library CORE65LPLVT] default_threshold_voltage_group LVT
-   set_user_attribute [find library CORE65LPHVT] default_threshold_voltage_group HVT
-}
-
 # READ
 read_verilog $in_verilog_filename
 read_sdc -version 1.3 $in_sdc_filename
@@ -44,8 +38,6 @@ read_sdc -version 1.3 $in_sdc_filename
 ##############################################################
 
 update_timing -full
-set_HVT_LVT > /dev/null
-report_global_slack -max > /dev/null
 
 ##############################################################
 # HVT_map procedure
@@ -61,6 +53,9 @@ proc dualVth {args} {
     set cycles 5
   }
 
+  set_user_attribute [find library CORE65LPLVT] default_threshold_voltage_group LVT > /dev/null
+  set_user_attribute [find library CORE65LPHVT] default_threshold_voltage_group HVT > /dev/null
+  report_global_slack -max > /dev/null
   #################################
   ### INSERT YOUR COMMANDS HERE ###
   #################################
