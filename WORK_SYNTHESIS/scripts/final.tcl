@@ -168,7 +168,7 @@ proc CharacterizeScript {} {
   LVT_restore
   update_power
   set leakage_start [get_attribute [get_design] leakage_power]
-  for {set percentage 1} {$percentage < 100} {incr percentage 5} {
+  for {set percentage 1} {$percentage < 100} {incr percentage } {
       set lvt_percentage [expr { $percentage / 100.0 } ]
       set TIME_start [clock clicks -milliseconds]
       dualVth -lvt $lvt_percentage -constraint soft 
@@ -181,7 +181,7 @@ proc CharacterizeScript {} {
       LVT_restore
   }
   
-  for {set percentage 1} {$percentage < 100} {incr percentage 5} {
+  for {set percentage 1} {$percentage < 100} {incr percentage } {
       set lvt_percentage [expr { $percentage / 100.0 } ]
       set TIME_start [clock clicks -milliseconds]
       dualVt -lvt $lvt_percentage -constraint hard 

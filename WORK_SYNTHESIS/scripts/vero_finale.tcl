@@ -22,7 +22,7 @@ suppress_message CMD-041
 ##############################################################
 
 # DEFINE CIRCUITS
-set blockName "c5315"
+set blockName "c1908"
 
 # DEFINE INPUT FILES
 set dir "./saved/${blockName}/synthesis"
@@ -55,7 +55,7 @@ proc dualVth {args} {
   parse_proc_arguments -args $args results
   set lvt $results(-lvt)
   set constraint $results(-constraint)
-  if {constraint == soft} {
+  if {$constraint == "soft"} {
     set cycles 15
   } else {
     set cycles 5
