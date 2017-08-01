@@ -1,0 +1,32 @@
+****************************************
+Report : Averaged Power
+Design : c432
+Version: J-2014.12
+Date   : Fri Jun 16 14:27:48 2017
+****************************************
+
+
+
+  Attributes
+  ----------
+      i  -  Including register clock pin internal power
+      u  -  User defined power group
+
+                        Internal  Switching  Leakage    Total
+Power Group             Power     Power      Power      Power   (     %)  Attrs
+--------------------------------------------------------------------------------
+clock_network              0.0000    0.0000    0.0000    0.0000 ( 0.00%)  i
+register                   0.0000    0.0000    0.0000    0.0000 ( 0.00%)  
+combinational              0.0000    0.0000    0.0000    0.0000 ( 0.00%)  
+sequential                 0.0000    0.0000    0.0000    0.0000 ( 0.00%)  
+memory                     0.0000    0.0000    0.0000    0.0000 ( 0.00%)  
+io_pad                     0.0000    0.0000    0.0000    0.0000 ( 0.00%)  
+black_box                  0.0000 9.792e-05    0.0000 9.792e-05 (100.00%) 
+
+  Net Switching Power  = 9.792e-05  (100.00%)
+  Cell Internal Power  =    0.0000   ( 0.00%)
+  Cell Leakage Power   =    0.0000   ( 0.00%)
+                         ---------
+Total Power            = 9.792e-05  (100.00%)
+
+1
